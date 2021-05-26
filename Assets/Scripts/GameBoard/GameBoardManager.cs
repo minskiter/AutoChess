@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class GameBoardManager : MonoBehaviour
 {
-    private enum GameState
+    public enum GameState
     {
         Battle,
         Start,
@@ -17,6 +17,8 @@ public class GameBoardManager : MonoBehaviour
     [SerializeField]
     private GameState state = GameState.Start;
 
+    public GameState BoardState => state;
+
     [SerializeField]
     private List<PieceController> _piecesList;
 
@@ -24,6 +26,10 @@ public class GameBoardManager : MonoBehaviour
     public MapEditor map;
 
     private IEnumerator<PieceController> currentPiece;
+
+    public Action WinHandler { get; set; }
+
+    public Action LossHandler { get; set; }
 
     void Awake()
     {
@@ -34,8 +40,18 @@ public class GameBoardManager : MonoBehaviour
     {
         if (state == GameState.End)
         {
-            Debug.Log(winner);
             state = GameState.Start;
+            SetDraggable(true,0);
+            if (winner == 0)
+            {
+                if (WinHandler != null)
+                    WinHandler();
+            }
+            else
+            {
+                if (LossHandler != null)
+                    LossHandler();
+            }
             currentPiece.Reset();
             // clear old piece
             map.ResetPieces();
@@ -44,6 +60,41 @@ public class GameBoardManager : MonoBehaviour
             {
                 piece.Reset();
                 map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece);
+            }
+        }
+    }
+
+    /// <summary>
+    /// start battle
+    /// </summary>
+    void StartBattle(){
+        state = GameState.Battle;
+        SetDraggable(false);
+    }
+
+    /// <summary>
+    /// Reset game board
+    /// </summary>
+    void Reset(){
+        if (map!=null){
+            map.ResetPieces();
+            _piecesList.Clear();
+        }
+    }
+
+    /// <summary>
+    /// set the piece draggable
+    /// </summary>
+    /// <param name="draggable"></param>
+    /// <param name="team"></param>
+    public void SetDraggable(bool draggable,int team=-1){
+        foreach (var piece in _piecesList){
+            if (team==-1)
+                piece.draggable = draggable;
+            else{
+                if (piece.Team == team){
+                    piece.draggable = draggable;
+                }
             }
         }
     }

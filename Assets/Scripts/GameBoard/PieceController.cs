@@ -22,11 +22,22 @@ public class PieceController : MonoBehaviour
     [SerializeField]
     private int maxHealth = 5;
 
+
     // current health
     private int health;
 
+    // GUI Responsive 
+    private int Health{
+        get{
+            return health;
+        }
+        set{
+
+        }
+    }
+
     // if alive?
-    public bool Alive => health >= 0;
+    public bool Alive => health > 0;
 
     public int attack = 1;
 
