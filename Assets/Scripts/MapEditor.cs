@@ -23,6 +23,8 @@ public class MapEditor : MonoBehaviour
 
     private PieceController[,] _pieceLocates; // piece locate 
 
+    private bool[,]  _canPlacePiece; // the cell which player can place
+
     private bool editable = true; // editable
 
     private bool update = false; // is update
@@ -49,6 +51,11 @@ public class MapEditor : MonoBehaviour
         InitTileMap();
     }
 
+    public bool canPlace(Vector3Int position){
+        Vector2Int inner = new Vector2Int(position.x,position.y)-mapRect.min;
+        return mapRect.Contains(new Vector2Int(position.x,position.y)) && _canPlacePiece[inner.x,inner.y];
+    }
+
     /// <summary>
     /// Initialize map
     /// </summary>
@@ -58,11 +65,15 @@ public class MapEditor : MonoBehaviour
         {
             _map = new bool[mapRect.width, mapRect.height];
             _pieceLocates = new PieceController[mapRect.width, mapRect.height];
+            _canPlacePiece = new bool[mapRect.width,mapRect.height];
             Map = GetComponent<Tilemap>();
             cellTile = Resources.Load("Tiles/center") as Tile;
             foreach (var pos in mapRect.allPositionsWithin)
             {
                 _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
+                if (pos.x-mapRect.xMin<=mapRect.width/2){
+                    _canPlacePiece[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
+                }
             }
             ReloadMap();
             init = true;
@@ -92,6 +103,14 @@ public class MapEditor : MonoBehaviour
                 _pieceLocates[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin] == null;
     }
 
+    public void ResetPieces(){
+        for (var row=0;row<_pieceLocates.GetLength(0);++row){
+            for (var col=0;col<_pieceLocates.GetLength(1);++col){
+                _pieceLocates[row,col] = null;
+            }
+        }
+    }
+
     /// <summary>
     /// Put piece in the cell
     /// </summary>
@@ -103,7 +122,6 @@ public class MapEditor : MonoBehaviour
         var cellPosition = new Vector2Int(pos.x, pos.y);
         if (mapRect.Contains(cellPosition) && _map[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin])
         {
-            Debug.Log($"{cellPosition.x - mapRect.xMin} {cellPosition.y - mapRect.yMin}",piece);
             _pieceLocates[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin] = piece;
             return true;
         }
@@ -136,13 +154,11 @@ public class MapEditor : MonoBehaviour
                     parent[nextInRect.x, nextInRect.y] = front;
                     if (target2.Equals(next))
                     {
-                        Debug.Log(nextInRect);
                         while (parent[nextInRect.x, nextInRect.y].HasValue)
                         {
                             path.Add(nextInRect + mapRect.min);
                             if ((nextInRect + mapRect.min).Equals(source2)) break;
                             nextInRect = parent[nextInRect.x, nextInRect.y].Value - mapRect.min;
-                            Debug.Log(nextInRect);
                         }
                         path.Reverse();
                         return path;

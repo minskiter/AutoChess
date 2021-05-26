@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1727734450550912506}
   - component: {fileID: 1727734450550912484}
   - component: {fileID: 3114432625705649329}
+  - component: {fileID: 358159392187636688}
   m_Layer: 3
   m_Name: Piece
   m_TagString: Untagged
@@ -105,6 +106,7 @@ MonoBehaviour:
   attackDistance: 1
   moveSpeed: 5
   offset: {x: 0.5, y: 1, z: 0}
+  draggable: 1
   Team: 0
   Target: {fileID: 0}
 --- !u!95 &3114432625705649329
@@ -126,6 +128,32 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!61 &358159392187636688
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727734450550912505}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.003242612, y: -0.084307685}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.5, y: 1.5}
+    newSize: {x: 1.5, y: 1.5}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.4169705, y: 0.42345563}
+  m_EdgeRadius: 0
 --- !u!1 &2222308136697711527
 GameObject:
   m_ObjectHideFlags: 0

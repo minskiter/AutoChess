@@ -13,7 +13,8 @@ public class PieceController : MonoBehaviour
     public enum PieceState{
         Idle,
         Move,
-        Die
+        Die,
+        Attack
     }
 
     [Header("Property")]
@@ -47,6 +48,11 @@ public class PieceController : MonoBehaviour
     // Offset to grid cell
     public Vector3 offset;
 
+    // true if the game object is darggable, otherwise false
+    public bool draggable;
+
+    [Header("Team")]
+
     public int Team = 0;
 
     private Vector3 targetPos;
@@ -70,6 +76,7 @@ public class PieceController : MonoBehaviour
 
     void Awake() {
         AnimatorController = GetComponent<Animator>();
+        originPos = Vector3Int.RoundToInt(transform.position-offset)+offset;
     }
 
     /// <summary>
@@ -81,8 +88,34 @@ public class PieceController : MonoBehaviour
         var grid = GetComponentInParent<Grid>().GetComponent<GameBoardManager>();
         if (grid != null)
         {
-            Debug.Log($"{gameObject.name} is deactivate");
+            state = PieceState.Die;
+            Debug.Log($"{gameObject.name} died");
             grid.map.PutPiece(Vector3Int.RoundToInt(CurrentPosition - offset), null);
+        }
+    }
+
+    void OnMouseDrag() {
+        if (draggable){
+            Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
+            curPosition.z = 0;
+            transform.position = curPosition;    
+        }
+    }
+
+    void OnMouseUp() {
+        if (draggable){
+            var grid = GetComponentInParent<Grid>().GetComponent<GameBoardManager>();
+            var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition-offset);
+            if (grid.map.canPlace(currentCellPosition)){  
+                grid.map.PutPiece(Vector3Int.RoundToInt(originPos-offset),null);
+                grid.map.PutPiece(currentCellPosition,this);
+                transform.position = currentCellPosition+offset;
+                originPos = transform.position;
+                targetPos = transform.position;
+            }else{
+                transform.position = originPos;
+            }
         }
     }
 
@@ -91,7 +124,6 @@ public class PieceController : MonoBehaviour
         health = maxHealth; // Set Default health to Max Health
         attackClock = 0; // Can Attack
         // fixed origin position
-        originPos = Vector3Int.RoundToInt(transform.position-offset)+offset;
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
     }
@@ -114,8 +146,11 @@ public class PieceController : MonoBehaviour
     private Action<int> applyDamage=null;
 
     public void Attack(Action<int> applyDamage){
-        AnimatorController.SetBool("PieceAttack",true);
-        this.applyDamage = applyDamage;
+        if (state==PieceState.Idle){
+            state = PieceState.Attack;
+            AnimatorController.SetBool("PieceAttack",true);
+            this.applyDamage = applyDamage;
+        }
     }
 
     /// <summary>
@@ -136,24 +171,37 @@ public class PieceController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        health = maxHealth;
-        attackClock = attackInterval;
-        transform.position = originPos;
+        state = PieceState.Idle;
+        Target = null;
+        gameObject.SetActive(true);
+        health = maxHealth; // Set Default health to Max Health
+        attackClock = 0; // Can Attack
+        // fixed origin position
+        transform.position = originPos; // origin cell position and offset
+        targetPos = originPos;
+        // reset animation
+        AnimatorController.Rebind();
+        AnimatorController.Update(0f);
     }
 
 
-    public void Move(Vector3 target)
+    public bool Move(Vector3 target)
     {
-        if (Vector3.Distance(CurrentPosition, target) <= 1.9f)
-        {
-            targetPos = target;
-            AnimatorController.SetBool("PieceRun",true);
-            state = PieceState.Move;
-            moveStart = 0;
-        }
-        else
-        {
-            targetPos = target;
+        if (state==PieceState.Idle){
+            if (Vector3.Distance(CurrentPosition, target) <= 1.9f)
+            {
+                targetPos = target;
+                AnimatorController.SetBool("PieceRun",true);
+                state = PieceState.Move;
+                moveStart = 0;
+            }
+            else
+            {
+                targetPos = target;
+            }
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -180,9 +228,15 @@ public class PieceController : MonoBehaviour
             attackClock -= Time.deltaTime;
         else{
             if (applyDamage!=null){
-                applyDamage(attack);
-                AnimatorController.SetBool("PieceAttack",false);
+                if (state==PieceState.Attack){
+                    applyDamage(attack);
+                    applyDamage=null;
+                    state = PieceState.Idle;
+                }else if (state==PieceState.Die){
+                    applyDamage = null;
+                }
             }
+            AnimatorController.SetBool("PieceAttack",false);
         }
         MoveStep();
     }
