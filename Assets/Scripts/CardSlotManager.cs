@@ -23,6 +23,7 @@ public class CardSlotManager : MonoBehaviour
             obj.transform.parent = this.transform;
             card = obj.AddComponent<Image>();
             card.sprite = Resources.Load("heros/bighero" + i, typeof(Sprite)) as Sprite;
+            card.transform.localScale = new Vector3(3f,3f,1f);
         }
     
         
