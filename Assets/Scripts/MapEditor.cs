@@ -11,10 +11,13 @@ public class MapEditor : MonoBehaviour
 
     public Tile cellTile; // the style of tile
 
+    // judge if this init
+    private bool init = false;
+
     private int height = 5;
     private int width = 11;
 
-    private RectInt mapRect => new RectInt(-width / 2, -height/2, width, height);
+    private RectInt mapRect => new RectInt(-width / 2, -height / 2, width, height);
 
     private bool[,] _map; // true if the cell exists, otherwise false
 
@@ -41,8 +44,7 @@ public class MapEditor : MonoBehaviour
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
     };
 
-    // Start is called before the first frame update
-    void Awake()
+    void OnEnable()
     {
         InitTileMap();
     }
@@ -50,17 +52,21 @@ public class MapEditor : MonoBehaviour
     /// <summary>
     /// Initialize map
     /// </summary>
-    void InitTileMap()
+    public void InitTileMap()
     {
-        _map = new bool[mapRect.width, mapRect.height];
-        _pieceLocates = new PieceController[mapRect.width, mapRect.height];
-        Map = GetComponent<Tilemap>();
-        cellTile = Resources.Load("Tiles/center") as Tile;
-        foreach (var pos in mapRect.allPositionsWithin)
+        if (!init)
         {
-            _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
+            _map = new bool[mapRect.width, mapRect.height];
+            _pieceLocates = new PieceController[mapRect.width, mapRect.height];
+            Map = GetComponent<Tilemap>();
+            cellTile = Resources.Load("Tiles/center") as Tile;
+            foreach (var pos in mapRect.allPositionsWithin)
+            {
+                _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
+            }
+            ReloadMap();
+            init = true;
         }
-        ReloadMap();
     }
 
     void ReloadMap()
@@ -97,6 +103,7 @@ public class MapEditor : MonoBehaviour
         var cellPosition = new Vector2Int(pos.x, pos.y);
         if (mapRect.Contains(cellPosition) && _map[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin])
         {
+            Debug.Log($"{cellPosition.x - mapRect.xMin} {cellPosition.y - mapRect.yMin}",piece);
             _pieceLocates[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin] = piece;
             return true;
         }
@@ -124,7 +131,7 @@ public class MapEditor : MonoBehaviour
             {
                 var next = front + direction;
                 var nextInRect = next - mapRect.min;
-                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (!_pieceLocates[nextInRect.x, nextInRect.y] || target2.Equals(next))  && parent[nextInRect.x, nextInRect.y] == null)
+                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y]==null || target2.Equals(next)) && parent[nextInRect.x, nextInRect.y] == null)
                 {
                     parent[nextInRect.x, nextInRect.y] = front;
                     if (target2.Equals(next))
@@ -149,7 +156,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// ÒÆ³ýÄ³¸ö¸ñ×Ó
+    /// ï¿½Æ³ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="pos"></param>
     private void RemoveTile(Vector3Int pos)
@@ -202,7 +209,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// Ë³Ê±ÕëÐý×ª90¡ã
+    /// Ë³Ê±ï¿½ï¿½ï¿½ï¿½×ª90ï¿½ï¿½
     /// </summary>
     private void RotateRight90Degree()
     {
@@ -210,7 +217,7 @@ public class MapEditor : MonoBehaviour
         int h = height;
         if (w == h)
         {
-            // ÏÈ¶Ô½ÇÏß·­×ª£¬ÔÙÉÏÏÂ·­×ª¾Í¿ÉÒÔ´ïµ½Ðý×ª90¡ãµÄÐ§¹û
+            // ï¿½È¶Ô½ï¿½ï¿½ß·ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½×ªï¿½Í¿ï¿½ï¿½Ô´ïµ½ï¿½ï¿½×ª90ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
             for (int i = 0; i < h; ++i)
             {
                 for (int j = i + 1; j < w; ++j)
@@ -253,7 +260,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// ½«µØÍ¼×ó°ë²¿·ÖÒÆ¶¯µ½ÓëÓÒ±ßºÏ²¢
+    /// ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ë²¿ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ßºÏ²ï¿½
     /// </summary>
     private void LeftMergeRight()
     {

@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class GameBoardManager : MonoBehaviour
 {
-    private enum State
+    private enum GameState
     {
         Battle,
         Start,
@@ -15,7 +15,7 @@ public class GameBoardManager : MonoBehaviour
     };
 
     [SerializeField]
-    private State GameState = State.Start;
+    private GameState state = GameState.Start;
 
     [SerializeField]
     private List<PieceController> _piecesList;
@@ -25,14 +25,25 @@ public class GameBoardManager : MonoBehaviour
 
     private IEnumerator<PieceController> currentPiece;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        // SetDefault Current Piece;
-        map = GetComponentInChildren<Tilemap>(true).GetComponent<MapEditor>();
+        
+    }
+
+    void OnEnable() {
+        map = GetComponentInChildren<Tilemap>(true).GetComponent<MapEditor>(); 
+        map.InitTileMap();
+        // SetDefault Current Piece;   
+        if (_piecesList==null || _piecesList.Count==0){
+            var pieces = GameObject.Find("Pieces");
+            foreach (var piece in pieces.GetComponentsInChildren<PieceController>()){
+                _piecesList.Add(piece);
+            }
+        }
         foreach (var piece in _piecesList)
         {
-            map.PutPiece(Vector3Int.FloorToInt(piece.CurrentPosition+Vector3.down), piece);
+            Debug.Log(Vector3Int.RoundToInt(piece.CurrentPosition-piece.offset),piece);
+            map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition-piece.offset), piece);
         }
         currentPiece = _piecesList.GetEnumerator();
     }
@@ -61,7 +72,7 @@ public class GameBoardManager : MonoBehaviour
 
     void Battle()
     {
-        if (GameState == State.Battle)
+        if (state == GameState.Battle)
         {
             // If end of piece then  reset piece to start
             if (!currentPiece.MoveNext())
@@ -81,27 +92,28 @@ public class GameBoardManager : MonoBehaviour
 
                     if (piece.Target == null)
                     {
-                        GameState = State.End;
+                        // update winner
+                        state = GameState.End;
                     }
                     // If need to  move piece
-                    if (piece.Target != null && !piece.Moving)
+                    if (piece.Target != null && piece.state != PieceController.PieceState.Move)
                     {
                         var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
-                        if (dis > piece.AttackDistance+6e-6f)
+                        if (dis > piece.AttackDistance+6e-6f) // float number equal 
                         {
                             // Whether the surrounding movable grid is shorter
-                            var targetPath = map.FindPathToTarget(Vector3Int.FloorToInt(piece.CurrentPosition+Vector3.down),
-                                Vector3Int.FloorToInt(piece.Target.TargetPos+Vector3.down));
+                            var targetPath = map.FindPathToTarget(Vector3Int.RoundToInt(piece.CurrentPosition-piece.offset),
+                                Vector3Int.RoundToInt(piece.Target.TargetPos-piece.offset));
                             if (targetPath != null)
                             {
                                 if (targetPath.Count > 0)
                                 {
-                                    var target = new Vector3(targetPath[0].x+.5f, targetPath[0].y, 0);
-                                    if (map.CheckMoveable(Vector3Int.FloorToInt(target)))
+                                    var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
+                                    if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
                                     {
-                                        map.PutPiece(Vector3Int.FloorToInt(piece.CurrentPosition+Vector3.down), null);
-                                        map.PutPiece(Vector3Int.FloorToInt(target), piece);
-                                        piece.Move(target + Vector3.up);
+                                        map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition-piece.offset), null);
+                                        map.PutPiece(Vector3Int.RoundToInt(target), piece);
+                                        piece.Move(target+piece.offset);
                                     }
                                 }
                             }
@@ -112,7 +124,7 @@ public class GameBoardManager : MonoBehaviour
                             if (piece.CanAttackDamage())
                             {
                                 Debug.Log(piece.gameObject.name + " Attack!");
-                                piece.Target.ApplyAttacked(piece.attack);
+                                piece.Attack(piece.Target.ApplyAttacked);
                             }
                         }
                     }
