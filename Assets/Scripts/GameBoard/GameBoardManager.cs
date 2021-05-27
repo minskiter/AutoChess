@@ -175,6 +175,7 @@ public class GameBoardManager : MonoBehaviour
                     if (piece.Target != null && piece.state != PieceController.PieceState.Move)
                     {
                         var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
+                        Debug.Log($"{piece.gameObject.name} {dis}");
                         if (dis > piece.AttackDistance + 6e-6f) // float number equal 
                         {
                             // Whether the surrounding movable grid is shorter
