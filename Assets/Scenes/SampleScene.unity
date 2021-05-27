@@ -1315,7 +1315,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 7
+  m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -1344,3 +1344,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6038918151fb504c813752ec68296f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cards: []
