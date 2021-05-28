@@ -337,6 +337,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4000010297628934}
+  - component: {fileID: 114000013343853570}
+  - component: {fileID: 114000012839864364}
   - component: {fileID: 61000013963853262}
   m_Layer: 0
   m_Name: Rock
@@ -363,6 +365,84 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114000013343853570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013751704308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ca5770bcacbd4f208f55ba07c65d4cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridSideLength: 1
+--- !u!114 &114000012839864364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013751704308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fdac4cf29aac456fae10b2badd410b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: {r: 1, g: 1, b: 1, a: 1}
+  orderInLayer: 0
+  sideLengthInPixels: 100
+  tileTag: Rock
+  sprites_center:
+  - {fileID: 21300000, guid: b516e06ff91664e588eebeed286babfd, type: 3}
+  - {fileID: 21300000, guid: f2e3e3deb357e490bb07db9b6e7dfb71, type: 3}
+  - {fileID: 21300000, guid: 148f24cc3e99343f3bdaafa89242a2f0, type: 3}
+  sprites_side:
+  - {fileID: 21300000, guid: 400f6a9931720492391564e89ffff739, type: 3}
+  - {fileID: 21300000, guid: e0844f5ac59a5470eb7cb5cfa7fe9d59, type: 3}
+  - {fileID: 21300000, guid: 04ffad9365c35448c992907cde18d1bf, type: 3}
+  sprites_cornerConvex:
+  - {fileID: 21300000, guid: 5715d2654008c495b860f4abcb888ec7, type: 3}
+  - {fileID: 21300000, guid: dfd5c92174cd14d00afe38b454ac7fd6, type: 3}
+  - {fileID: 21300000, guid: 8f91f883aba734920999547e11338156, type: 3}
+  sprites_cornerConcave:
+  - {fileID: 21300000, guid: 1abd9ddb000934927a991a3050b4b325, type: 3}
+  - {fileID: 21300000, guid: c6afc61eae1f54edeb9cb76a995edde0, type: 3}
+  - {fileID: 21300000, guid: 657ce55b73d304e24940c4be2b7dff30, type: 3}
+  quadrants:
+  - dir: 1
+    startRot: 0
+    offset: {x: 0.5, y: 0.5}
+    sr: {fileID: 212000013416320918}
+    rolledSprite_center: {fileID: 21300000, guid: f2e3e3deb357e490bb07db9b6e7dfb71, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 04ffad9365c35448c992907cde18d1bf, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: dfd5c92174cd14d00afe38b454ac7fd6, type: 3}
+    rolledSprite_cornerConcave: {fileID: 0}
+  - dir: 3
+    startRot: 90
+    offset: {x: -0.5, y: 0.5}
+    sr: {fileID: 212000011584661804}
+    rolledSprite_center: {fileID: 21300000, guid: 148f24cc3e99343f3bdaafa89242a2f0, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 04ffad9365c35448c992907cde18d1bf, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: 8f91f883aba734920999547e11338156, type: 3}
+    rolledSprite_cornerConcave: {fileID: 0}
+  - dir: 5
+    startRot: 180
+    offset: {x: -0.5, y: -0.5}
+    sr: {fileID: 212000010406570034}
+    rolledSprite_center: {fileID: 21300000, guid: b516e06ff91664e588eebeed286babfd, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 04ffad9365c35448c992907cde18d1bf, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: 5715d2654008c495b860f4abcb888ec7, type: 3}
+    rolledSprite_cornerConcave: {fileID: 0}
+  - dir: 7
+    startRot: 270
+    offset: {x: 0.5, y: -0.5}
+    sr: {fileID: 212000012562519570}
+    rolledSprite_center: {fileID: 21300000, guid: b516e06ff91664e588eebeed286babfd, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 400f6a9931720492391564e89ffff739, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: 8f91f883aba734920999547e11338156, type: 3}
+    rolledSprite_cornerConcave: {fileID: 0}
 --- !u!61 &61000013963853262
 BoxCollider2D:
   m_ObjectHideFlags: 0

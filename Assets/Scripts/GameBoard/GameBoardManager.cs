@@ -31,6 +31,7 @@ public class GameBoardManager : MonoBehaviour
 
     public Action LossHandler { get; set; }
 
+
     void Awake()
     {
 
@@ -67,9 +68,10 @@ public class GameBoardManager : MonoBehaviour
     /// <summary>
     /// start battle
     /// </summary>
-    void StartBattle(){
+    public void StartBattle(){
         state = GameState.Battle;
         SetDraggable(false);
+        currentPiece = _piecesList.GetEnumerator();
     }
 
     /// <summary>
@@ -114,9 +116,13 @@ public class GameBoardManager : MonoBehaviour
         }
         foreach (var piece in _piecesList)
         {
-            map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece);
+            Debug.Log(map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece));
         }
         currentPiece = _piecesList.GetEnumerator();
+    }
+
+    public void AddPiece(PieceController piece){
+        _piecesList.Add(piece);       
     }
 
 
@@ -153,6 +159,7 @@ public class GameBoardManager : MonoBehaviour
             else
             {
                 var piece = currentPiece.Current;
+                // Debug.Log($"{piece.gameObject.name} piece.Alive",piece);
                 // If piece alive then judge if it doesn't have the target enemy
                 if (piece.Alive)
                 {
@@ -167,6 +174,7 @@ public class GameBoardManager : MonoBehaviour
 
                     if (piece.Target == null)
                     {
+                        Debug.Log($"winner {piece.Team}");
                         // update winner
                         state = GameState.End;
                         GameOver(piece.Team);
@@ -175,7 +183,6 @@ public class GameBoardManager : MonoBehaviour
                     if (piece.Target != null && piece.state != PieceController.PieceState.Move)
                     {
                         var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
-                        Debug.Log($"{piece.gameObject.name} {dis}");
                         if (dis > piece.AttackDistance + 6e-6f) // float number equal 
                         {
                             // Whether the surrounding movable grid is shorter
@@ -186,6 +193,7 @@ public class GameBoardManager : MonoBehaviour
                                 if (targetPath.Count > 0)
                                 {
                                     var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
+                                    Debug.Log(map.CheckMoveable(Vector3Int.RoundToInt(target)),piece);
                                     if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
                                     {
                                         map.PutPiece(Vector3Int.RoundToInt(target), piece); // place the piece to target first 
@@ -199,7 +207,11 @@ public class GameBoardManager : MonoBehaviour
                                         }
 
                                     }
+                                }else{
+                                    Debug.Log(targetPath,piece);
                                 }
+                            }else{
+                                Debug.Log(targetPath,piece);
                             }
                         }
                         else

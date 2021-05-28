@@ -23,7 +23,7 @@ public class MapEditor : MonoBehaviour
 
     private PieceController[,] _pieceLocates; // piece locate 
 
-    private bool[,]  _canPlacePiece; // the cell which player can place
+    private bool[,] _canPlacePiece; // the cell which player can place
 
     private bool editable = true; // editable
 
@@ -35,6 +35,8 @@ public class MapEditor : MonoBehaviour
     private int leftTileCount = 0;
 
     private int maxLeftTileCount = 15;
+    public int maxPieces = 5;
+
 
     private List<Vector3Int> forwards3 = new List<Vector3Int>
     {
@@ -51,9 +53,24 @@ public class MapEditor : MonoBehaviour
         InitTileMap();
     }
 
-    public bool canPlace(Vector3Int position){
-        Vector2Int inner = new Vector2Int(position.x,position.y)-mapRect.min;
-        return mapRect.Contains(new Vector2Int(position.x,position.y)) && _canPlacePiece[inner.x,inner.y];
+    public bool canPlace(Vector3Int position, bool add = false)
+    {
+        if (add)
+        {
+            int cnt = 0;
+            foreach (var piece in _pieceLocates)
+            {
+                if (piece != null)
+                {
+                    if (piece.Team == 0)
+                        ++cnt;
+                }
+            }
+            if (cnt+1 > maxPieces) return false;
+        }
+        
+        Vector2Int inner = new Vector2Int(position.x, position.y) - mapRect.min;
+        return mapRect.Contains(new Vector2Int(position.x, position.y)) && _canPlacePiece[inner.x, inner.y] && _map[inner.x, inner.y] && _pieceLocates[inner.x, inner.y] == null;
     }
 
     /// <summary>
@@ -65,13 +82,14 @@ public class MapEditor : MonoBehaviour
         {
             _map = new bool[mapRect.width, mapRect.height];
             _pieceLocates = new PieceController[mapRect.width, mapRect.height];
-            _canPlacePiece = new bool[mapRect.width,mapRect.height];
+            _canPlacePiece = new bool[mapRect.width, mapRect.height];
             Map = GetComponent<Tilemap>();
             cellTile = Resources.Load("Tiles/center") as Tile;
             foreach (var pos in mapRect.allPositionsWithin)
             {
                 _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
-                if (pos.x-mapRect.xMin<=mapRect.width/2){
+                if (pos.x - mapRect.xMin <= mapRect.width / 2)
+                {
                     _canPlacePiece[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
                 }
             }
@@ -103,10 +121,13 @@ public class MapEditor : MonoBehaviour
                 _pieceLocates[cellPosition.x - mapRect.xMin, cellPosition.y - mapRect.yMin] == null;
     }
 
-    public void ResetPieces(){
-        for (var row=0;row<_pieceLocates.GetLength(0);++row){
-            for (var col=0;col<_pieceLocates.GetLength(1);++col){
-                _pieceLocates[row,col] = null;
+    public void ResetPieces()
+    {
+        for (var row = 0; row < _pieceLocates.GetLength(0); ++row)
+        {
+            for (var col = 0; col < _pieceLocates.GetLength(1); ++col)
+            {
+                _pieceLocates[row, col] = null;
             }
         }
     }
@@ -149,7 +170,7 @@ public class MapEditor : MonoBehaviour
             {
                 var next = front + direction;
                 var nextInRect = next - mapRect.min;
-                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y]==null || target2.Equals(next)) && parent[nextInRect.x, nextInRect.y] == null)
+                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y] == null || target2.Equals(next)) && parent[nextInRect.x, nextInRect.y] == null)
                 {
                     parent[nextInRect.x, nextInRect.y] = front;
                     if (target2.Equals(next))

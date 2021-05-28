@@ -337,6 +337,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4000011669313032}
+  - component: {fileID: 114000012438552124}
+  - component: {fileID: 114000013954208314}
   - component: {fileID: 61000012792849664}
   m_Layer: 0
   m_Name: Grass
@@ -363,6 +365,81 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114000012438552124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000012086074106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ca5770bcacbd4f208f55ba07c65d4cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridSideLength: 1
+--- !u!114 &114000013954208314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000012086074106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fdac4cf29aac456fae10b2badd410b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: {r: 1, g: 1, b: 1, a: 1}
+  orderInLayer: 1
+  sideLengthInPixels: 100
+  tileTag: Grass
+  sprites_center:
+  - {fileID: 21300000, guid: 6f0bded2f76d24778888f4126c8b9efc, type: 3}
+  - {fileID: 21300000, guid: 375a7c3aa49e94eb9a98a08e48a092a9, type: 3}
+  - {fileID: 21300000, guid: 4511153978beb451aa5601bfade58277, type: 3}
+  sprites_side:
+  - {fileID: 21300000, guid: 31d83a923d0254c1698ff5bd7177dae3, type: 3}
+  - {fileID: 21300000, guid: d1e774bc08531444697b05a4ac0954e7, type: 3}
+  sprites_cornerConvex:
+  - {fileID: 21300000, guid: 4e03f2c682fc943fc8f4901feda1ae88, type: 3}
+  - {fileID: 21300000, guid: d239090ee706e4bb09d75065fe888b52, type: 3}
+  sprites_cornerConcave:
+  - {fileID: 21300000, guid: 48e6eb4020eab4651b3b3a3cdccb25cd, type: 3}
+  - {fileID: 21300000, guid: e0052a13eb09a4b2683a3e06ef72957e, type: 3}
+  quadrants:
+  - dir: 1
+    startRot: 0
+    offset: {x: 0.5, y: 0.5}
+    sr: {fileID: 212000010882558406}
+    rolledSprite_center: {fileID: 21300000, guid: 6f0bded2f76d24778888f4126c8b9efc, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 31d83a923d0254c1698ff5bd7177dae3, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: d239090ee706e4bb09d75065fe888b52, type: 3}
+    rolledSprite_cornerConcave: {fileID: 21300000, guid: 48e6eb4020eab4651b3b3a3cdccb25cd, type: 3}
+  - dir: 3
+    startRot: 90
+    offset: {x: -0.5, y: 0.5}
+    sr: {fileID: 212000012482501088}
+    rolledSprite_center: {fileID: 21300000, guid: 4511153978beb451aa5601bfade58277, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 31d83a923d0254c1698ff5bd7177dae3, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: d239090ee706e4bb09d75065fe888b52, type: 3}
+    rolledSprite_cornerConcave: {fileID: 21300000, guid: 48e6eb4020eab4651b3b3a3cdccb25cd, type: 3}
+  - dir: 5
+    startRot: 180
+    offset: {x: -0.5, y: -0.5}
+    sr: {fileID: 212000010395002324}
+    rolledSprite_center: {fileID: 21300000, guid: 6f0bded2f76d24778888f4126c8b9efc, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 31d83a923d0254c1698ff5bd7177dae3, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: d239090ee706e4bb09d75065fe888b52, type: 3}
+    rolledSprite_cornerConcave: {fileID: 21300000, guid: e0052a13eb09a4b2683a3e06ef72957e, type: 3}
+  - dir: 7
+    startRot: 270
+    offset: {x: 0.5, y: -0.5}
+    sr: {fileID: 212000010623828170}
+    rolledSprite_center: {fileID: 21300000, guid: 6f0bded2f76d24778888f4126c8b9efc, type: 3}
+    rolledSprite_side: {fileID: 21300000, guid: 31d83a923d0254c1698ff5bd7177dae3, type: 3}
+    rolledSprite_cornerConvex: {fileID: 21300000, guid: 4e03f2c682fc943fc8f4901feda1ae88, type: 3}
+    rolledSprite_cornerConcave: {fileID: 21300000, guid: 48e6eb4020eab4651b3b3a3cdccb25cd, type: 3}
 --- !u!61 &61000012792849664
 BoxCollider2D:
   m_ObjectHideFlags: 0

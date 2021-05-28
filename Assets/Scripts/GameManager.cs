@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private GameState state;
 
     void Awake() {
+        Debug.Log("Awake",gameObject);
         manager = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         manager.WinHandler = WinHanler;
