@@ -5,18 +5,13 @@ using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
-    public Dictionary<int, List<GameObject>> CardData;
-
-    public DataManager manager;
-
     public List<CardBaseController> Cards;
 
     private void Awake()
     {
-        CardData = manager.piecePrefabs;
         Cards = GetComponentsInChildren<CardBaseController>().ToList();
         Debug.Log($"Cards Count:{Cards.Count}", gameObject);
-        StartCoroutine("LoadCardData");
+        LoadCardData();
     }
 
     public void ResetCard()
@@ -41,12 +36,8 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    IEnumerator LoadCardData()
+    public void LoadCardData()
     {
-        while (!CardData.Any() || Cards == null)
-        {
-            yield return new WaitForSeconds(.3f);
-        }
         foreach (var card in Cards)
         {
             var cardItem = GetRandomCard(1);
@@ -61,7 +52,6 @@ public class CardManager : MonoBehaviour
             controller.Reset();
             card.cardItem = item;
         }
-        yield break;
     }
 
     private void ChangeLayer(Transform obj, int layer)
@@ -76,8 +66,11 @@ public class CardManager : MonoBehaviour
 
     GameObject GetRandomCard(int star)
     {
-        if (CardData.ContainsKey(star))
-            return CardData[star][Random.Range(0, CardData[star].Count)];
+        var cardData = DataManager.Instance.piecePrefabs;
+        if (cardData.ContainsKey(star))
+        {
+            return cardData[star][Random.Range(0, cardData[star].Count)];
+        }
         else
         {
             Debug.LogWarning($"{star} piece not found");
