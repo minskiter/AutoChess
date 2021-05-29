@@ -4,20 +4,15 @@ using System.Data;
 using System.IO;
 using UnityEngine;
 
-public class DataManager : MonoBehaviour
+public class DataManager
 {
-    DataTable data;
+    public static DataManager Instance = new DataManager();
+
     public Dictionary<int,List<GameObject>> piecePrefabs = new Dictionary<int, List<GameObject>>();
 
-    private void Awake()
+    public void Init()
     {
-        Debug.Log("Load data.",gameObject);
-        data = CsvLoader.LoadCsv("Data/pieces.csv");
-        LoadCard();
-    }
-
-    private void LoadCard()
-    {
+        DataTable data = CsvLoader.LoadCsv("Data/pieces.csv");
         foreach (DataRow row in data.Rows)
         {
             string name = row["name"].ToString();

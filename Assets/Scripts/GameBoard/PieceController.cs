@@ -33,14 +33,27 @@ public class PieceController : MonoBehaviour
         {
             return health;
         }
+        private set
+        {
+            int preValue = health;
+            health = value;
+            OnHealthUpdate?.Invoke(preValue, value);
+            
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
     }
+
+    public event Action<int, int> OnHealthUpdate;
 
     public GameObject healthUI;
 
     public GameObject healthSystem;
 
     // if alive?
-    public bool Alive => health > 0;
+    public bool Alive => Health > 0;
 
     public int attack = 1;
 
@@ -112,7 +125,7 @@ public class PieceController : MonoBehaviour
         }
         var prefab = Resources.Load<GameObject>("Prefab/Health/Health");
         healthUI = Instantiate<GameObject>(prefab, healthSystem.transform);
-        healthUI.GetComponent<HealthController>().target = this;
+        healthUI.GetComponent<HealthController>().Init(this);
     }
 
     public void SetOriginPosition()
@@ -139,6 +152,8 @@ public class PieceController : MonoBehaviour
         this.moveSpeed = moveSpeed;
     }
 
+    public event Action OnDie;
+
     /// <summary>
     /// death event
     /// </summary>
@@ -152,6 +167,8 @@ public class PieceController : MonoBehaviour
             grid.map.PutPiece(Vector3Int.RoundToInt(CurrentPosition - offset), null);
         }
         gameObject.SetActive(false);
+
+        OnDie?.Invoke();
     }
 
     /// <summary>
@@ -225,7 +242,7 @@ public class PieceController : MonoBehaviour
     /// </summary>
     void OnEnable()
     {
-        health = maxHealth; // Set Default health to Max Health
+        Health = maxHealth; // Set Default health to Max Health
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
@@ -281,12 +298,8 @@ public class PieceController : MonoBehaviour
     /// <param name="damage">health damage</param>
     public void ApplyAttacked(int damage)
     {
-        Debug.Log($"{gameObject.name}: {health}");
-        health -= damage;
-        if (health <= 0)
-        {
-            Die();
-        }
+        Debug.Log($"{gameObject.name}: {Health}");
+        Health -= damage;
     }
 
     /// <summary>
@@ -297,7 +310,7 @@ public class PieceController : MonoBehaviour
         gameObject.SetActive(true);
         state = PieceState.Idle;
         Target = null;
-        health = maxHealth; // Set Default health to Max Health
+        Health = maxHealth; // Set Default health to Max Health
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;

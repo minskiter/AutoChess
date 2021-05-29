@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour
 {
-    public PieceController target;
+    public PieceController Target;
 
 
     public RectTransform bar;
@@ -13,42 +14,32 @@ public class HealthController : MonoBehaviour
 
     public Vector2 offset;
 
-    public bool init = true;
-
-    private void Start()
+    public void Init(PieceController target)
     {
-        init = false;
+        gameObject.SetActive(true);
+        Target = target;
+        target.OnHealthUpdate += Target_OnHealthUpdate;
+        target.OnDie += Target_OnDie;
+        StartCoroutine(FollowTarget());
     }
 
-    private void OnEnable()
+    private IEnumerator FollowTarget()
     {
-        Debug.Log("enable");
-        StartCoroutine("UpdateHealth");
-    }
-
-    IEnumerator UpdateHealth()
-    {
-        slider.value = slider.maxValue;
         while (true)
         {
-            while (target && target.Alive)
-            {
-                if (!gameObject.activeInHierarchy)
-                    gameObject.SetActive(true);
-                var pos = target.transform.position;
-                bar.transform.position = new Vector2(pos.x, pos.y) + offset;
-                slider.value = target.Health * 1f / target.maxHealth;
-                yield return null;
-            }
-            if (target && !target.Alive)
-                gameObject.SetActive(false);
-            if (!init && target == null)
-            {
-                Destroy(gameObject, .1f);
-                yield break;
-            }
+            var pos = Target.transform.position;
+            bar.transform.position = new Vector2(pos.x, pos.y) + offset;
             yield return null;
         }
     }
 
+    private void Target_OnDie()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void Target_OnHealthUpdate(int preValue, int value)
+    {
+        slider.value = value * 1f / Target.maxHealth;
+    }
 }
