@@ -27,8 +27,11 @@ public class HealthController : MonoBehaviour
     {
         while (true)
         {
-            var pos = Target.transform.position;
-            bar.transform.position = new Vector2(pos.x, pos.y) + offset;
+            if (Target != null)
+            {
+                var pos = Target.transform.position;
+                bar.transform.position = new Vector2(pos.x, pos.y) + offset;
+            }
             yield return null;
         }
     }

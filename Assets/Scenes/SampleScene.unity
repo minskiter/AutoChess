@@ -1506,7 +1506,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2117915057}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: ResetCard
         m_Mode: 1
@@ -1932,52 +1932,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1363344496}
   - component: {fileID: 1363344495}
-  - component: {fileID: 1363344497}
-  m_Layer: 5
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
---- !u!4 &1358415711
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1358415710}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.166, y: -0.1, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1376483207}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1358415713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1358415710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adf3cec7eea4897448d63833d6df7e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardPrefab: {fileID: 0}
-  cardItem: {fileID: 0}
---- !u!1 &1363344494
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1363344496}
-  - component: {fileID: 1363344495}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -2012,55 +1966,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1376483204
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1376483207}
-  - component: {fileID: 1376483205}
-  m_Layer: 3
-  m_Name: CardArea
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1376483205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376483204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cafd17f26d655134d8668518cad3cd5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Cards: []
---- !u!4 &1376483207
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376483204}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.3986, y: -3.73, z: 0}
-  m_LocalScale: {x: 11.482123, y: 2.455451, z: 1}
-  m_Children:
-  - {fileID: 1964278647}
-  - {fileID: 1358415711}
-  - {fileID: 1634601653}
-  - {fileID: 877079011}
-  - {fileID: 1817843893}
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1378783011
 GameObject:
@@ -2795,13 +2700,24 @@ PrefabInstance:
     - target: {fileID: 7293501835467743145, guid: 9b08dce7c90db5340ae1ac8e8540686a, type: 3}
       propertyPath: manager
       value: 
-      objectReference: {fileID: 1363344497}
+      objectReference: {fileID: 0}
     - target: {fileID: 7293501835467743146, guid: 9b08dce7c90db5340ae1ac8e8540686a, type: 3}
       propertyPath: m_Name
       value: CardArea
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b08dce7c90db5340ae1ac8e8540686a, type: 3}
+--- !u!114 &2117915057 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7293501835467743145, guid: 9b08dce7c90db5340ae1ac8e8540686a, type: 3}
+  m_PrefabInstance: {fileID: 2117915056}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cafd17f26d655134d8668518cad3cd5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2129200974 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5526796807635919640, guid: 369c712d3e5e8864b88486676ef1fd17, type: 3}
