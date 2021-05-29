@@ -18,9 +18,31 @@ public class PieceController : MonoBehaviour
         Attack
     }
 
+    private GameBoardManager gameBoardInstance;
+
+    public GameBoardManager gameBoardManager
+    {
+        get
+        {
+            if (gameBoardInstance == null)
+            {
+                gameBoardInstance = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
+            }
+            return gameBoardInstance;
+        }
+    }
+
     [Header("Property")]
 
     public int maxHealth = 5;
+
+    public string pieceName;
+
+
+    /// <summary>
+    /// Spend Cost
+    /// </summary>
+    public int cost;
 
 
     // current health
@@ -38,10 +60,10 @@ public class PieceController : MonoBehaviour
             int preValue = health;
             health = value;
             OnHealthUpdate?.Invoke(preValue, value);
-            
-            if (health <= 0)
+            if (health <= 0 && preValue > 0)
             {
-                Die();
+                health = 0;
+                StartCoroutine(Die());
             }
         }
     }
@@ -99,7 +121,17 @@ public class PieceController : MonoBehaviour
     // the position of origin placement
     private Vector3 originPos;
 
-    public Vector3 OriginPos => originPos;
+    public Vector3 OriginPos
+    {
+        get
+        {
+            return originPos;
+        }
+        set
+        {
+            originPos = value;
+        }
+    }
 
     public PieceController Target;
 
@@ -111,10 +143,21 @@ public class PieceController : MonoBehaviour
 
     void Awake()
     {
-        // AnimatorController = GetComponent<Animator>();
         AnimatorController = GetComponent<CharacterAnimator>();
         SetOriginPosition();
         initHealthUI();
+    }
+
+    /// <summary>
+    /// enable move
+    /// </summary>
+    void OnEnable()
+    {
+        Health = maxHealth; // Set Default health to Max Health
+        // fixed origin position
+        transform.position = originPos; // origin cell position and offset
+        targetPos = originPos;
+        healthUI.SetActive(true);
     }
 
     void initHealthUI()
@@ -142,14 +185,16 @@ public class PieceController : MonoBehaviour
     /// <param name="attackInterval">attack interval</param>
     /// <param name="star">stars</param>
     /// <param name="moveSpeed">move speed</param>
-    public void CloneProperties(int maxHealth, int attack, float attackDistance, float attackInterval, int star, float moveSpeed)
+    public void CloneProperties(string name, int maxHealth, int attack, float attackDistance, float attackInterval, int star, float moveSpeed, int cost)
     {
+        this.pieceName = name;
         this.maxHealth = maxHealth;
         this.attack = attack;
         this.attackDistance = attackDistance;
         this.attackInterval = attackInterval;
         this.star = star;
         this.moveSpeed = moveSpeed;
+        this.cost = cost;
     }
 
     public event Action OnDie;
@@ -157,17 +202,13 @@ public class PieceController : MonoBehaviour
     /// <summary>
     /// death event
     /// </summary>
-    void Die()
+    public IEnumerator Die()
     {
-        var grid = GetComponentInParent<Grid>().GetComponent<GameBoardManager>();
-        if (grid != null)
-        {
-            state = PieceState.Die;
-            AnimatorController.ChangeAnimation(PlayerAnimations.Death.ToString());
-            grid.map.PutPiece(Vector3Int.RoundToInt(CurrentPosition - offset), null);
-        }
+        state = PieceState.Die;
+        AnimatorController.ChangeAnimation(PlayerAnimations.Death.ToString());
+        yield return new WaitForSeconds(1f);
+        gameBoardManager.map.PutPiece(Vector3Int.RoundToInt(CurrentPosition - offset), null);
         gameObject.SetActive(false);
-
         OnDie?.Invoke();
     }
 
@@ -199,12 +240,11 @@ public class PieceController : MonoBehaviour
     {
         if (draggable)
         {
-            var grid = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
             var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
-            if (grid.map.canPlace(currentCellPosition))
+            if (gameBoardManager.map.canPlace(currentCellPosition))
             {
-                grid.map.PutPiece(Vector3Int.RoundToInt(originPos - offset), null);
-                grid.map.PutPiece(currentCellPosition, this);
+                gameBoardManager.map.PutPiece(Vector3Int.RoundToInt(originPos - offset), null);
+                gameBoardManager.map.PutPiece(currentCellPosition, this);
                 transform.position = currentCellPosition + offset;
                 originPos = transform.position;
                 targetPos = transform.position;
@@ -216,19 +256,26 @@ public class PieceController : MonoBehaviour
         }
         if (placeable)
         {
-            var grid = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
             var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
-            if (grid.map.canPlace(currentCellPosition, true))
+            if (gameBoardManager.map.canPlace(currentCellPosition, true))
             {
-                transform.parent = GameObject.Find("Pieces").transform;
-                transform.position = currentCellPosition + offset;
-                transform.localScale = new Vector3(.3f, .3f, .3f);
-                grid.map.PutPiece(currentCellPosition, this);
-                originPos = transform.position;
-                targetPos = transform.position;
-                placeable = false;
-                draggable = true;
-                grid.AddPiece(this);
+                var add = gameBoardManager.AddPiece(this);
+                if (add != null)
+                {
+                    add.transform.parent = GameObject.Find("Pieces").transform;
+                    add.transform.position = currentCellPosition + offset;
+                    add.transform.localScale = new Vector3(.3f, .3f, .3f);
+                    add.originPos = add.transform.position;
+                    add.targetPos = add.transform.position;
+                    add.placeable = false;
+                    add.draggable = true;
+                    gameBoardManager.map.PutPiece(currentCellPosition, add);
+                }
+                else
+                {
+                    transform.position = originPos;
+                }
+
             }
             else
             {
@@ -237,17 +284,7 @@ public class PieceController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// enable move
-    /// </summary>
-    void OnEnable()
-    {
-        Health = maxHealth; // Set Default health to Max Health
-        // fixed origin position
-        transform.position = originPos; // origin cell position and offset
-        targetPos = originPos;
-        healthUI.SetActive(true);
-    }
+
 
     /// <summary>
     /// Calculate the attack
@@ -298,7 +335,6 @@ public class PieceController : MonoBehaviour
     /// <param name="damage">health damage</param>
     public void ApplyAttacked(int damage)
     {
-        Debug.Log($"{gameObject.name}: {Health}");
         Health -= damage;
     }
 
@@ -307,7 +343,8 @@ public class PieceController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        gameObject.SetActive(true);
+        if (!gameObject.activeInHierarchy)
+            gameObject.SetActive(true);
         state = PieceState.Idle;
         Target = null;
         Health = maxHealth; // Set Default health to Max Health
@@ -320,6 +357,11 @@ public class PieceController : MonoBehaviour
         AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
     }
 
+    private void OnDestroy()
+    {
+        Destroy(healthUI);
+    }
+
 
     public bool Move(Vector3 target)
     {
@@ -329,7 +371,6 @@ public class PieceController : MonoBehaviour
             // AnimatorController.SetBool("PieceRun",true);
             AnimatorController.ChangeAnimation(PlayerAnimations.Run.ToString());
             state = PieceState.Move;
-            Debug.Log("move", this.gameObject);
             StartCoroutine("MoveStep");
             return true;
         }
@@ -341,7 +382,6 @@ public class PieceController : MonoBehaviour
 
     IEnumerator MoveStep()
     {
-        Debug.Log(state);
         var percent = 0f;
         while (state == PieceState.Move)
         {

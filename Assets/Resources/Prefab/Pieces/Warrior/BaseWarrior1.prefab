@@ -362,13 +362,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f77d045f0dcd7648add8dd1c4350b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 15
+  pieceName: warrior
+  healthUI: {fileID: 0}
+  healthSystem: {fileID: 0}
   attack: 1
   star: 1
   attackInterval: 1
   attackDistance: 1
-  moveSpeed: 1
-  offset: {x: 0.5, y: 0.5, z: 0}
+  moveSpeed: 3
+  offset: {x: 0.5, y: 0.3, z: 0}
   draggable: 0
   placeable: 0
   Team: 0

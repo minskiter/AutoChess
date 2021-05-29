@@ -11,7 +11,8 @@ public class GameBoardManager : MonoBehaviour
     {
         Battle,
         Start,
-        End
+        End,
+        Pause
     };
 
     [SerializeField]
@@ -28,20 +29,18 @@ public class GameBoardManager : MonoBehaviour
 
     public Action WinHandler { get; set; }
 
-    public Action LossHandler { get; set; }
+    public Action<int> LossHandler { get; set; }
 
+    public PlayerController playerController;
 
-    void Awake()
-    {
-
-    }
+    public DataManager dataManager = DataManager.Instance;
 
     public void GameOver(int winner)
     {
         if (state == GameState.End)
         {
             state = GameState.Start;
-            SetDraggable(true,0);
+            SetDraggable(true, 0);
             if (winner == 0)
             {
                 if (WinHandler != null)
@@ -50,7 +49,10 @@ public class GameBoardManager : MonoBehaviour
             else
             {
                 if (LossHandler != null)
-                    LossHandler();
+                {
+                    var healthDamage = GetAllTeamHealth(1);
+                    LossHandler(healthDamage);
+                }
             }
             currentPiece.Reset();
             // clear old piece
@@ -67,17 +69,27 @@ public class GameBoardManager : MonoBehaviour
     /// <summary>
     /// start battle
     /// </summary>
-    public void StartBattle(){
-        state = GameState.Battle;
-        SetDraggable(false);
-        currentPiece = _piecesList.GetEnumerator();
+    public void StartBattle()
+    {
+        if (state == GameState.Battle)
+        {
+            state = GameState.Pause;
+        }
+        else if (state == GameState.Start || state == GameState.Pause)
+        {
+            state = GameState.Battle;
+            SetDraggable(false);
+            currentPiece = _piecesList.GetEnumerator();
+        }
     }
 
     /// <summary>
     /// Reset game board
     /// </summary>
-    void Reset(){
-        if (map!=null){
+    void Reset()
+    {
+        if (map != null)
+        {
             map.ResetPieces();
             _piecesList.Clear();
         }
@@ -88,19 +100,23 @@ public class GameBoardManager : MonoBehaviour
     /// </summary>
     /// <param name="draggable"></param>
     /// <param name="team"></param>
-    public void SetDraggable(bool draggable,int team=-1){
-        foreach (var piece in _piecesList){
-            if (team==-1)
+    public void SetDraggable(bool draggable, int team = -1)
+    {
+        foreach (var piece in _piecesList)
+        {
+            if (team == -1)
                 piece.draggable = draggable;
-            else{
-                if (piece.Team == team){
+            else
+            {
+                if (piece.Team == team)
+                {
                     piece.draggable = draggable;
                 }
             }
         }
     }
 
-    void OnEnable()
+    void Start()
     {
         map = GetComponentInChildren<Tilemap>(true).GetComponent<MapEditor>();
         map.InitTileMap();
@@ -115,13 +131,73 @@ public class GameBoardManager : MonoBehaviour
         }
         foreach (var piece in _piecesList)
         {
-            Debug.Log(map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece));
+            map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece);
         }
         currentPiece = _piecesList.GetEnumerator();
+        StartCoroutine(Battle());
     }
 
-    public void AddPiece(PieceController piece){
-        _piecesList.Add(piece);       
+    public PieceController AddPiece(PieceController piece)
+    {
+        if (piece.cost <= playerController.Gold && state == GameState.Start)
+        {
+            if (playerController.SpendMoney(piece.cost))
+            {
+                piece = UpgradePiece(piece);
+                _piecesList.Add(piece);
+                return piece;
+            }
+        }
+        return null;
+    }
+
+
+    public PieceController UpgradePiece(PieceController piece)
+    {
+        List<PieceController> pieces = new List<PieceController>
+        {
+        };
+        foreach (var p in _piecesList)
+        {
+            if (p.pieceName == piece.pieceName && piece.star == p.star && piece.Team == p.Team)
+            {
+                pieces.Add(p);
+            }
+        }
+        if (pieces.Count >= 2)
+        {
+            if (dataManager.piecePrefabs.ContainsKey(piece.star + 1))
+            {
+                var list = dataManager.piecePrefabs[piece.star + 1];
+                var uppiece = list.Find(e => e.GetComponent<PieceController>().pieceName == piece.pieceName);
+                if (uppiece != null)
+                {
+                    var uppieceInstance = Instantiate(uppiece);
+                    uppieceInstance.transform.position = piece.transform.position;
+                    var controller = uppieceInstance.GetComponent<PieceController>();
+                    LayerTool.ChangeLayer(uppieceInstance.transform, 3);
+                    foreach (var p in pieces)
+                    {
+                        map.PutPiece(Vector3Int.RoundToInt(p.CurrentPosition - p.offset), null);
+                        _piecesList.Remove(p);
+                        Destroy(p.gameObject);
+                    }
+                    Destroy(piece.gameObject);
+                    return controller;
+                }
+            }
+        }
+        return piece;
+    }
+
+    public int GetAllTeamHealth(int team)
+    {
+        int cnt = 0;
+        foreach (var piece in _piecesList)
+        {
+            if (piece.Team == team) cnt += piece.Health;
+        }
+        return cnt;
     }
 
 
@@ -146,90 +222,86 @@ public class GameBoardManager : MonoBehaviour
         origin.Target = target;
     }
 
-    void Battle()
+    public IEnumerator Battle()
     {
-        if (state == GameState.Battle)
+        while (true)
         {
-            // If end of piece then  reset piece to start
-            if (!currentPiece.MoveNext())
+            if (state == GameState.Battle)
             {
-                currentPiece.Reset();
-            }
-            else
-            {
-                var piece = currentPiece.Current;
-                // Debug.Log($"{piece.gameObject.name} piece.Alive",piece);
-                // If piece alive then judge if it doesn't have the target enemy
-                if (piece.Alive)
+                // If end of piece then  reset piece to start
+                if (!currentPiece.MoveNext())
                 {
-                    if (piece.Target != null && !piece.Target.Alive)
+                    currentPiece.Reset();
+                }
+                else
+                {
+                    var piece = currentPiece.Current;
+                    // If piece alive then judge if it doesn't have the target enemy
+                    if (piece.Alive)
                     {
-                        piece.Target = null;
-                    }
-                    if (piece.Target == null)
-                    {
-                        FindEnemy(piece);
-                    }
-
-                    if (piece.Target == null)
-                    {
-                        Debug.Log($"winner {piece.Team}");
-                        // update winner
-                        state = GameState.End;
-                        GameOver(piece.Team);
-                    }
-                    // If need to  move piece
-                    if (piece.Target != null && piece.state != PieceController.PieceState.Move)
-                    {
-                        var dis = Vector3.Distance(piece.Target.CurrentPosition, piece.CurrentPosition);
-                        if (dis > piece.AttackDistance + 6e-6f) // float number equal 
+                        if (piece.Target != null && !piece.Target.Alive)
                         {
-                            // Whether the surrounding movable grid is shorter
-                            var targetPath = map.FindPathToTarget(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
-                                Vector3Int.RoundToInt(piece.Target.TargetPos - piece.offset));
-                            if (targetPath != null)
-                            {
-                                if (targetPath.Count > 0)
-                                {
-                                    var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
-                                    if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
-                                    {
-                                        map.PutPiece(Vector3Int.RoundToInt(target), piece); // place the piece to target first 
-                                        if (piece.Move(target + piece.offset))
-                                        {
-                                            map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), null);
-                                        }
-                                        else
-                                        {
-                                            map.PutPiece(Vector3Int.RoundToInt(target), null);
-                                        }
-
-                                    }
-                                }else{
-                                    Debug.Log(targetPath,piece);
-                                }
-                            }else{
-                                Debug.Log(targetPath,piece);
-                            }
+                            piece.Target = null;
+                        }
+                        if (piece.Target == null)
+                        {
+                            FindEnemy(piece);
+                        }
+                        if (piece.Target == null)
+                        {
+                            yield return new WaitForSeconds(5f);
+                            // update winner
+                            state = GameState.End;
+                            GameOver(piece.Team);
                         }
                         else
                         {
-                            // Attack the piece
-                            if (piece.CanAttackDamage())
+                            // If need to  move piece
+                            if (piece.state != PieceController.PieceState.Move)
                             {
-                                piece.Attack(piece.Target.ApplyAttacked);
+                                var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
+                                if (dis > piece.AttackDistance + 6e-6f) // float number equal 
+                                {
+                                    // Whether the surrounding movable grid is shorter
+                                    var targetPath = map.FindPathToTarget(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
+                                        Vector3Int.RoundToInt(piece.Target.TargetPos - piece.offset), piece.AttackDistance + 6e-6f);
+                                    if (targetPath != null)
+                                    {
+                                        if (targetPath.Count > 0)
+                                        {
+                                            var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
+                                            if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
+                                            {
+                                                map.PutPiece(Vector3Int.RoundToInt(target), piece); // place the piece to target first 
+                                                if (piece.Move(target + piece.offset))
+                                                {
+                                                    map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), null);
+                                                }
+                                                else
+                                                {
+                                                    map.PutPiece(Vector3Int.RoundToInt(target), null);
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (Vector3.Distance(piece.Target.CurrentPosition, piece.CurrentPosition) < piece.AttackDistance + 6e-6)
+                                {
+                                    // Attack the piece
+                                    if (piece.CanAttackDamage())
+                                    {
+                                        piece.Attack(piece.Target.ApplyAttacked);
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
+                }
             }
+            yield return null;
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Battle();
-    }
 }

@@ -5,18 +5,20 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // the turn of game
-    public int turn = 0;
+    public int turn = 1;
 
     // the stage of game
     public int stage = 0;
 
     // the manager of game board
-    private GameBoardManager manager;
+    public GameBoardManager manager;
 
     // the player 
-    private PlayerController player;
+    public PlayerController player;
 
-    private enum GameState{
+
+    private enum GameState
+    {
         Draw,
         Place,
         Battle,
@@ -25,10 +27,8 @@ public class GameManager : MonoBehaviour
 
     private GameState state;
 
-    void Awake() {
-        Debug.Log("Awake",gameObject);
-        manager = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
-        player = GameObject.Find("Player").GetComponent<PlayerController>();
+    void Awake()
+    {
         manager.WinHandler = WinHanler;
         manager.LossHandler = LossHander;
     }
@@ -36,23 +36,30 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// handler of the win
     /// </summary>
-    public void WinHanler(){
+    public void WinHanler()
+    {
         state = GameState.Settlement;
+        ++turn;
     }
 
     /// <summary>
     /// handler of loss
     /// </summary>
-    public void LossHander(){
+    public void LossHander(int damage)
+    {
         state = GameState.Settlement;
-        player.TakeDamage(5);
-        if (!player.Alive){
+        player.TakeDamage(Mathf.RoundToInt(damage / 10f * turn));
+        player.Gold += Mathf.FloorToInt(Mathf.Min(damage / 2, 10));
+        ++turn;
+        if (!player.Alive)
+        {
             // end of game
         }
     }
 
-    public void Reset(){
+    public void Reset()
+    {
         turn = 0;
     }
-  
+
 }

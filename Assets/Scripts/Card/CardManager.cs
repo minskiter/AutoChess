@@ -7,6 +7,10 @@ public class CardManager : MonoBehaviour
 {
     public List<CardBaseController> Cards;
 
+    public PlayerController player;
+
+    public int cost;
+
     private void Awake()
     {
         Cards = GetComponentsInChildren<CardBaseController>().ToList();
@@ -16,23 +20,26 @@ public class CardManager : MonoBehaviour
 
     public void ResetCard()
     {
-        foreach (var card in Cards)
+        if (player.SpendMoney(cost))
         {
-            if (card.cardItem && card.cardItem.transform.parent == card.transform)
+            foreach (var card in Cards)
             {
-                Destroy(card.cardItem);
+                if (card.cardItem && card.cardItem.transform.parent == card.transform)
+                {
+                    Destroy(card.cardItem);
+                }
+                var cardItem = GetRandomCard(1);
+                var item = Instantiate(cardItem);
+                item.transform.localScale = new Vector3(.3f, .3f, 1);
+                item.transform.parent = card.gameObject.transform;
+                item.transform.position = card.transform.position;
+                LayerTool.ChangeLayer(item.transform, 3);
+                var controller = item.GetComponent<PieceController>();
+                controller.placeable = true;
+                controller.OriginPos = item.transform.position;
+                controller.Reset();
+                card.cardItem = item;
             }
-            var cardItem = GetRandomCard(1);
-            var item = Instantiate(cardItem);
-            item.transform.localScale = new Vector3(.3f, .3f, 1);
-            item.transform.parent = card.gameObject.transform;
-            item.transform.position = card.transform.position;
-            ChangeLayer(item.transform, 3);
-            var controller = item.GetComponent<PieceController>();
-            controller.placeable = true;
-            controller.SetOriginPosition();
-            controller.Reset();
-            card.cardItem = item;
         }
     }
 
@@ -45,22 +52,23 @@ public class CardManager : MonoBehaviour
             item.transform.localScale = new Vector3(.3f, .3f, 1);
             item.transform.parent = card.gameObject.transform;
             item.transform.position = card.transform.position;
-            ChangeLayer(item.transform, 3);
+            LayerTool.ChangeLayer(item.transform, 3);
             var controller = item.GetComponent<PieceController>();
             controller.placeable = true;
-            controller.SetOriginPosition();
+            controller.OriginPos = item.transform.position;
             controller.Reset();
             card.cardItem = item;
         }
     }
 
-    private void ChangeLayer(Transform obj, int layer)
+    public void SetPlaceable(bool flag = false)
     {
-        obj.gameObject.layer = layer;
-        var children = obj.GetComponentsInChildren<Transform>(true);
-        foreach (var trans in children)
+        foreach (var card in Cards)
         {
-            trans.gameObject.layer = 3;
+            if (card.cardItem != null)
+            {
+                card.cardItem.GetComponent<PieceController>().placeable = flag;
+            }
         }
     }
 
@@ -73,7 +81,7 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{star} piece not found");
+            Debug.LogWarning($"star {star} of piece not found");
             return null;
         }
     }

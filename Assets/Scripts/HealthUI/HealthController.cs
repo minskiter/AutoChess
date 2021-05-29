@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class HealthController : MonoBehaviour
 {
     public PieceController Target;
-
-
     public RectTransform bar;
     public Slider slider;
 
     public Vector2 offset;
+
+    private bool init = false;
 
     public void Init(PieceController target)
     {
@@ -21,6 +21,13 @@ public class HealthController : MonoBehaviour
         target.OnHealthUpdate += Target_OnHealthUpdate;
         target.OnDie += Target_OnDie;
         StartCoroutine(FollowTarget());
+        init = true;
+    }
+
+    private void OnEnable() {
+        if (init){
+            StartCoroutine(FollowTarget());
+        }
     }
 
     private IEnumerator FollowTarget()

@@ -406,6 +406,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4089710076800568089, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 802115625}
+    - target: {fileID: 4089710076800568089, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4089710076800568092, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
       propertyPath: m_Name
       value: MenuCanvas

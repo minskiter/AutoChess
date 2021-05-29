@@ -15,17 +15,13 @@ public class toSampleScene : MonoBehaviour
     void OnClick()
     {
 
-        SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+        SceneManager.LoadScene("Battle", LoadSceneMode.Single);
 
-        var scene = SceneManager.GetSceneByName("SampleScene");
+        var scene = SceneManager.GetSceneByName("Battle");
         SceneManager.sceneLoaded += (Scene sc, LoadSceneMode loadSceneMode) =>
         {
             SceneManager.SetActiveScene(scene);
         };
         //Debug.Log("Active Scene : " + SceneManager.GetActiveScene().name);
-    }
-    // Update is called once per frame
-    void Update()
-    {
     }
 }

@@ -29,12 +29,10 @@ public class MapEditor : MonoBehaviour
 
     private bool update = false; // is update
 
-    private int updateTimestamp = 5;
     private float curTimestamp = 0f;
 
     private int leftTileCount = 0;
 
-    private int maxLeftTileCount = 15;
     public int maxPieces = 5;
 
 
@@ -66,9 +64,9 @@ public class MapEditor : MonoBehaviour
                         ++cnt;
                 }
             }
-            if (cnt+1 > maxPieces) return false;
+            if (cnt + 1 > maxPieces) return false;
         }
-        
+
         Vector2Int inner = new Vector2Int(position.x, position.y) - mapRect.min;
         return mapRect.Contains(new Vector2Int(position.x, position.y)) && _canPlacePiece[inner.x, inner.y] && _map[inner.x, inner.y] && _pieceLocates[inner.x, inner.y] == null;
     }
@@ -83,8 +81,6 @@ public class MapEditor : MonoBehaviour
             _map = new bool[mapRect.width, mapRect.height];
             _pieceLocates = new PieceController[mapRect.width, mapRect.height];
             _canPlacePiece = new bool[mapRect.width, mapRect.height];
-            Map = GetComponent<Tilemap>();
-            cellTile = Resources.Load("Tiles/center") as Tile;
             foreach (var pos in mapRect.allPositionsWithin)
             {
                 _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
@@ -155,7 +151,7 @@ public class MapEditor : MonoBehaviour
     /// <param name="source">source cell</param>
     /// <param name="target">target cell</param>
     /// <returns></returns>
-    public List<Vector2Int> FindPathToTarget(Vector3Int source, Vector3Int target)
+    public List<Vector2Int> FindPathToTarget(Vector3Int source, Vector3Int target, float distance)
     {
         var path = new List<Vector2Int>();
         var target2 = new Vector2Int(target.x, target.y);
@@ -170,10 +166,10 @@ public class MapEditor : MonoBehaviour
             {
                 var next = front + direction;
                 var nextInRect = next - mapRect.min;
-                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y] == null || target2.Equals(next)) && parent[nextInRect.x, nextInRect.y] == null)
+                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y] == null) && parent[nextInRect.x, nextInRect.y] == null)
                 {
                     parent[nextInRect.x, nextInRect.y] = front;
-                    if (target2.Equals(next))
+                    if (Vector2.Distance(target2, next) < distance)
                     {
                         while (parent[nextInRect.x, nextInRect.y].HasValue)
                         {
@@ -193,7 +189,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// �Ƴ�ĳ������
+    /// Remove Tile
     /// </summary>
     /// <param name="pos"></param>
     private void RemoveTile(Vector3Int pos)
@@ -246,7 +242,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// ˳ʱ����ת90��
+    /// Rotate 90 degree
     /// </summary>
     private void RotateRight90Degree()
     {
@@ -254,7 +250,7 @@ public class MapEditor : MonoBehaviour
         int h = height;
         if (w == h)
         {
-            // �ȶԽ��߷�ת�������·�ת�Ϳ��Դﵽ��ת90���Ч��
+            // reverse x/y and reverse y equal rotate 90 degree
             for (int i = 0; i < h; ++i)
             {
                 for (int j = i + 1; j < w; ++j)
@@ -297,7 +293,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// ����ͼ��벿���ƶ������ұߺϲ�
+    /// move left to right
     /// </summary>
     private void LeftMergeRight()
     {
@@ -334,9 +330,4 @@ public class MapEditor : MonoBehaviour
         }
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
 }

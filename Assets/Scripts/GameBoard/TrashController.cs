@@ -6,12 +6,20 @@ public class TrashController : MonoBehaviour
 {
     public GameBoardManager manager;
 
-    void OnTriggerEnter2D(Collider2D other){    
-        if (manager!=null){
+    public PlayerController player;
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (manager != null)
+        {
             var controller = other.GetComponent<PieceController>();
-            manager._piecesList.Remove(controller);
-            manager.map.PutPiece(Vector3Int.RoundToInt(controller.OriginPos-controller.offset),null);
-            Destroy(controller.gameObject);
+            if (controller.draggable)
+            {
+                manager._piecesList.Remove(controller);
+                manager.map.PutPiece(Vector3Int.RoundToInt(controller.OriginPos - controller.offset), null);
+                player.Gold += controller.cost / 2;
+                Destroy(controller.gameObject);
+            }
         }
     }
 }
