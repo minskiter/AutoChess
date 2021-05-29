@@ -10,7 +10,8 @@ using UnityEngine;
 /// </summary>
 public class PieceController : MonoBehaviour
 {
-    public enum PieceState{
+    public enum PieceState
+    {
         Idle,
         Move,
         Die,
@@ -19,22 +20,24 @@ public class PieceController : MonoBehaviour
 
     [Header("Property")]
 
-    [SerializeField]
-    private int maxHealth = 5;
+    public int maxHealth = 5;
 
 
     // current health
     private int health;
 
     // GUI Responsive 
-    private int Health{
-        get{
+    public int Health
+    {
+        get
+        {
             return health;
         }
-        set{
-
-        }
     }
+
+    public GameObject healthUI;
+
+    public GameObject healthSystem;
 
     // if alive?
     public bool Alive => health > 0;
@@ -47,7 +50,6 @@ public class PieceController : MonoBehaviour
     // attack interval 1s
     [SerializeField]
     private float attackInterval = 1f;
-    private float attackClock = 1f;
 
     // attack distance
     [SerializeField]
@@ -76,17 +78,15 @@ public class PieceController : MonoBehaviour
 
     private Vector3 targetPos;
 
-    private float moveStart = 0;
-
     // move public
     public Vector3 TargetPos => targetPos;
 
-    public PieceState state {private set;get;}
+    public PieceState state { private set; get; }
 
     // the position of origin placement
     private Vector3 originPos;
 
-    public Vector3 OriginPos=>originPos;
+    public Vector3 OriginPos => originPos;
 
     public PieceController Target;
 
@@ -96,14 +96,28 @@ public class PieceController : MonoBehaviour
     // public Animator AnimatorController;
     public CharacterAnimator AnimatorController;
 
-    void Awake() {
+    void Awake()
+    {
         // AnimatorController = GetComponent<Animator>();
         AnimatorController = GetComponent<CharacterAnimator>();
         SetOriginPosition();
+        initHealthUI();
     }
 
-    public void SetOriginPosition(){
-        originPos = Vector3Int.RoundToInt(transform.position-offset)+offset;
+    void initHealthUI()
+    {
+        if (healthSystem == null)
+        {
+            healthSystem = GameObject.Find("HealthSystem");
+        }
+        var prefab = Resources.Load<GameObject>("Prefab/Health/Health");
+        healthUI = Instantiate<GameObject>(prefab, healthSystem.transform);
+        healthUI.GetComponent<HealthController>().target = this;
+    }
+
+    public void SetOriginPosition()
+    {
+        originPos = Vector3Int.RoundToInt(transform.position - offset) + offset;
     }
 
     /// <summary>
@@ -115,10 +129,11 @@ public class PieceController : MonoBehaviour
     /// <param name="attackInterval">attack interval</param>
     /// <param name="star">stars</param>
     /// <param name="moveSpeed">move speed</param>
-    public void CloneProperties(int maxHealth,int attack,float attackDistance,float attackInterval,int star,float moveSpeed){
+    public void CloneProperties(int maxHealth, int attack, float attackDistance, float attackInterval, int star, float moveSpeed)
+    {
         this.maxHealth = maxHealth;
         this.attack = attack;
-        this.attackDistance  = attackDistance;
+        this.attackDistance = attackDistance;
         this.attackInterval = attackInterval;
         this.star = star;
         this.moveSpeed = moveSpeed;
@@ -142,14 +157,17 @@ public class PieceController : MonoBehaviour
     /// <summary>
     /// move mouse
     /// </summary>
-    void OnMouseDrag() {
-        if (draggable){
+    void OnMouseDrag()
+    {
+        if (draggable)
+        {
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             curPosition.z = 0;
-            transform.position = curPosition;    
+            transform.position = curPosition;
         }
-        if (placeable){
+        if (placeable)
+        {
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             curPosition.z = 3f;
@@ -160,34 +178,43 @@ public class PieceController : MonoBehaviour
     /// <summary>
     /// mouse up
     /// </summary>
-    void OnMouseUp() {
-        if (draggable){
+    void OnMouseUp()
+    {
+        if (draggable)
+        {
             var grid = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
-            var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition-offset);
-            if (grid.map.canPlace(currentCellPosition)){  
-                grid.map.PutPiece(Vector3Int.RoundToInt(originPos-offset),null);
-                grid.map.PutPiece(currentCellPosition,this);
-                transform.position = currentCellPosition+offset;
+            var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
+            if (grid.map.canPlace(currentCellPosition))
+            {
+                grid.map.PutPiece(Vector3Int.RoundToInt(originPos - offset), null);
+                grid.map.PutPiece(currentCellPosition, this);
+                transform.position = currentCellPosition + offset;
                 originPos = transform.position;
                 targetPos = transform.position;
-            }else{
+            }
+            else
+            {
                 transform.position = originPos;
             }
         }
-        if (placeable){
+        if (placeable)
+        {
             var grid = GameObject.Find("GameBoard").GetComponent<GameBoardManager>();
-            var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition-offset);
-            if (grid.map.canPlace(currentCellPosition,true)){  
+            var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
+            if (grid.map.canPlace(currentCellPosition, true))
+            {
                 transform.parent = GameObject.Find("Pieces").transform;
-                transform.position = currentCellPosition+offset;
-                transform.localScale = new Vector3(.3f,.3f,.3f);
-                grid.map.PutPiece(currentCellPosition,this);
+                transform.position = currentCellPosition + offset;
+                transform.localScale = new Vector3(.3f, .3f, .3f);
+                grid.map.PutPiece(currentCellPosition, this);
                 originPos = transform.position;
                 targetPos = transform.position;
                 placeable = false;
                 draggable = true;
                 grid.AddPiece(this);
-            }else{
+            }
+            else
+            {
                 transform.position = originPos;
             }
         }
@@ -199,10 +226,10 @@ public class PieceController : MonoBehaviour
     void OnEnable()
     {
         health = maxHealth; // Set Default health to Max Health
-        attackClock = 0; // Can Attack
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
+        // healthUI.SetActive(true);
     }
 
     /// <summary>
@@ -211,29 +238,41 @@ public class PieceController : MonoBehaviour
     /// <returns></returns>
     public bool CanAttackDamage()
     {
-        if (attackClock <= 0)
-        {
-            attackClock = attackInterval;
-            return true;
-        }
-
-        return false;
+        return state == PieceState.Idle;
     }
 
-    private Action<int> applyDamage=null;
+    private Action<int> applyDamage = null;
 
-    public void Attack(Action<int> applyDamage){
-        if (state==PieceState.Idle){
+    public void Attack(Action<int> applyDamage)
+    {
+        if (state == PieceState.Idle)
+        {
             state = PieceState.Attack;
             // AnimatorController.SetBool("PieceAttack",true);
             AnimatorController.ChangeAnimation(PlayerAnimations.Attack1.ToString());
             this.applyDamage = applyDamage;
+            StartCoroutine("AttackAction");
         }
     }
 
-    public void ChangeTeam(int team){
-        Team  = team;
-        AnimatorController.SetFlipX(team==1);
+    IEnumerator AttackAction()
+    {
+        AnimatorController.ChangeAnimation(PlayerAnimations.Attack2.ToString());
+        yield return new WaitForSeconds(attackInterval);
+        if (state == PieceState.Attack && this.applyDamage != null)
+        {
+            state = PieceState.Idle;
+            this.applyDamage(attack);
+            AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
+        }
+        this.applyDamage = null;
+        yield break;
+    }
+
+    public void ChangeTeam(int team)
+    {
+        Team = team;
+        AnimatorController.SetFlipX(team == 1);
     }
 
     /// <summary>
@@ -257,9 +296,7 @@ public class PieceController : MonoBehaviour
     {
         state = PieceState.Idle;
         Target = null;
-        gameObject.SetActive(true);
         health = maxHealth; // Set Default health to Max Health
-        attackClock = 0; // Can Attack
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
@@ -272,54 +309,43 @@ public class PieceController : MonoBehaviour
 
     public bool Move(Vector3 target)
     {
-        if (state==PieceState.Idle){
+        if (state == PieceState.Idle)
+        {
             targetPos = target;
             // AnimatorController.SetBool("PieceRun",true);
             AnimatorController.ChangeAnimation(PlayerAnimations.Run.ToString());
             state = PieceState.Move;
-            moveStart = 0;
+            Debug.Log("move", this.gameObject);
+            StartCoroutine("MoveStep");
             return true;
-        }else{
+        }
+        else
+        {
             return false;
         }
     }
 
-    private void MoveStep()
+    IEnumerator MoveStep()
     {
-        if (state == PieceState.Move)
-        {         
-            moveStart += Time.deltaTime * moveSpeed;
-            transform.position = Vector3.Lerp(transform.position, targetPos, moveStart);
-            if (moveStart >= 1f)
+        Debug.Log(state);
+        var percent = 0f;
+        while (state == PieceState.Move)
+        {
+            percent += Time.deltaTime * moveSpeed;
+            transform.position = Vector3.Lerp(transform.position, targetPos, percent);
+            if (percent >= 1f)
             {
                 transform.position = targetPos;
                 state = PieceState.Idle;
-                // AnimatorController.SetBool("PieceRun",false);
                 AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
-                moveStart = 0;
+                yield break;
+            }
+            else
+            {
+                yield return null;
             }
         }
+        yield break;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (attackClock>0)
-            attackClock -= Time.deltaTime;
-        else{
-            if (applyDamage!=null){
-                if (state==PieceState.Attack){
-                    applyDamage(attack);
-                    applyDamage=null;
-                    state = PieceState.Idle;
-                    AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
-                }else if (state==PieceState.Die){
-                    applyDamage = null;
-                }
-            }
-            // AnimatorController.SetBool("PieceAttack",false);
-            // AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
-        }
-        MoveStep();
-    }
 }

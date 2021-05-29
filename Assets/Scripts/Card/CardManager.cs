@@ -7,16 +7,38 @@ public class CardManager : MonoBehaviour
 {
     public Dictionary<int, List<GameObject>> CardData;
 
+    public DataManager manager;
+
     public List<CardBaseController> Cards;
 
     private void Awake()
     {
-        var manager = GameObject.Find("GameManager").GetComponent<DataManager>();
-        Debug.Assert(manager != null);
         CardData = manager.piecePrefabs;
         Cards = GetComponentsInChildren<CardBaseController>().ToList();
         Debug.Log($"Cards Count:{Cards.Count}", gameObject);
         StartCoroutine("LoadCardData");
+    }
+
+    public void ResetCard()
+    {
+        foreach (var card in Cards)
+        {
+            if (card.cardItem && card.cardItem.transform.parent == card.transform)
+            {
+                Destroy(card.cardItem);
+            }
+            var cardItem = GetRandomCard(1);
+            var item = Instantiate(cardItem);
+            item.transform.localScale = new Vector3(.3f, .3f, 1);
+            item.transform.parent = card.gameObject.transform;
+            item.transform.position = card.transform.position;
+            ChangeLayer(item.transform, 3);
+            var controller = item.GetComponent<PieceController>();
+            controller.placeable = true;
+            controller.SetOriginPosition();
+            controller.Reset();
+            card.cardItem = item;
+        }
     }
 
     IEnumerator LoadCardData()
@@ -27,8 +49,7 @@ public class CardManager : MonoBehaviour
         }
         foreach (var card in Cards)
         {
-            var cardItem = GetRandomCard(2);
-            Debug.Log("Get Card Item", cardItem);
+            var cardItem = GetRandomCard(1);
             var item = Instantiate(cardItem);
             item.transform.localScale = new Vector3(.3f, .3f, 1);
             item.transform.parent = card.gameObject.transform;

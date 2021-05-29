@@ -19,8 +19,7 @@ public class GameBoardManager : MonoBehaviour
 
     public GameState BoardState => state;
 
-    [SerializeField]
-    private List<PieceController> _piecesList;
+    public List<PieceController> _piecesList;
 
     [NonSerialized]
     public MapEditor map;
@@ -182,7 +181,7 @@ public class GameBoardManager : MonoBehaviour
                     // If need to  move piece
                     if (piece.Target != null && piece.state != PieceController.PieceState.Move)
                     {
-                        var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
+                        var dis = Vector3.Distance(piece.Target.CurrentPosition, piece.CurrentPosition);
                         if (dis > piece.AttackDistance + 6e-6f) // float number equal 
                         {
                             // Whether the surrounding movable grid is shorter
@@ -193,7 +192,6 @@ public class GameBoardManager : MonoBehaviour
                                 if (targetPath.Count > 0)
                                 {
                                     var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
-                                    Debug.Log(map.CheckMoveable(Vector3Int.RoundToInt(target)),piece);
                                     if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
                                     {
                                         map.PutPiece(Vector3Int.RoundToInt(target), piece); // place the piece to target first 

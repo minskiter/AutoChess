@@ -10,7 +10,7 @@ static public class CsvLoader
     static public DataTable LoadCsv(string path)
     {
         var lines = File.ReadLines(Path.Combine(Application.dataPath, path));
-        var headers = lines.First().Split('\t');
+        var headers = lines.First().Split(',');
         var table = new DataTable();
         foreach (var header in headers){
             table.Columns.Add(header);
@@ -18,7 +18,7 @@ static public class CsvLoader
         lines = File.ReadLines(Path.Combine(Application.dataPath, path));
         foreach (var line in lines.Skip(1))
         {   
-            var data = line.Split('\t');
+            var data = line.Split(',');
             if (data.Length>0)
                 table.Rows.Add(data);
         }
