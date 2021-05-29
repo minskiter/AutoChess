@@ -17,12 +17,12 @@ public class HealthController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log(init);
         init = false;
     }
 
     private void OnEnable()
     {
+        Debug.Log("enable");
         StartCoroutine("UpdateHealth");
     }
 

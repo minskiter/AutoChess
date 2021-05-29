@@ -229,7 +229,7 @@ public class PieceController : MonoBehaviour
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
-        // healthUI.SetActive(true);
+        healthUI.SetActive(true);
     }
 
     /// <summary>
@@ -294,6 +294,7 @@ public class PieceController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
+        gameObject.SetActive(true);
         state = PieceState.Idle;
         Target = null;
         health = maxHealth; // Set Default health to Max Health
