@@ -28,6 +28,15 @@ public class CardManager : MonoBehaviour
                 {
                     Destroy(card.cardItem);
                 }
+                var ui = card.GetComponent<CardBaseController>().ui;
+                if (ui != null )
+                {
+                    Animator ui_Animator = ui.GetComponent<Animator>();
+                    if (ui_Animator.GetCurrentAnimatorStateInfo(0).IsName("FrontToBack"))
+                    {
+                        ui_Animator.SetTrigger("BackToFront");
+                    }
+                }
                 var cardItem = GetRandomCard(1);
                 var item = Instantiate(cardItem);
                 item.transform.localScale = new Vector3(.3f, .3f, 1);
