@@ -20,6 +20,7 @@ public class PieceController : MonoBehaviour
 
     private GameBoardManager gameBoardInstance;
 
+
     public GameBoardManager gameBoardManager
     {
         get
