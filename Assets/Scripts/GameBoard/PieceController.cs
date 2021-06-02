@@ -263,6 +263,15 @@ public class PieceController : MonoBehaviour
                 var add = gameBoardManager.AddPiece(this);
                 if (add != null)
                 {
+                    var card = transform.parent.gameObject;
+                    if (card != null)
+                    {
+                        var ui = card.GetComponent<CardBaseController>().ui;
+                        if(ui != null)
+                        {
+                            ui.GetComponent<Animator>().SetTrigger("FrontToBack");
+                        }
+                    }
                     add.transform.parent = GameObject.Find("Pieces").transform;
                     add.transform.position = currentCellPosition + offset;
                     add.transform.localScale = new Vector3(.3f, .3f, .3f);
