@@ -303,7 +303,7 @@ public class PieceController : MonoBehaviour
         {
             state = PieceState.Attack;
             // AnimatorController.SetBool("PieceAttack",true);
-            AnimatorController.ChangeAnimation(PlayerAnimations.Attack1.ToString());
+            // AnimatorController.ChangeAnimation(PlayerAnimations.Attack1.ToString());
             this.applyDamage = applyDamage;
             StartCoroutine("AttackAction");
         }

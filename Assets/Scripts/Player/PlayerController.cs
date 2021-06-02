@@ -66,8 +66,6 @@ public class PlayerController : MonoBehaviour
 
     public bool Alive => health > 0;
 
-    private HealthSystem HealthSystem;
-
     void Awake()
     {
         Health = maxHealth;
