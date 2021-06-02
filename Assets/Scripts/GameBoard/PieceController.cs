@@ -154,11 +154,19 @@ public class PieceController : MonoBehaviour
     /// </summary>
     void OnEnable()
     {
+        StartCoroutine(ResetProperty());
+    }
+
+    IEnumerator ResetProperty()
+    {
+        yield return null;
+        AnimatorController.SetFlipX(Team == 1);
         Health = maxHealth; // Set Default health to Max Health
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
         healthUI.SetActive(true);
+        yield break;
     }
 
     void initHealthUI()
@@ -167,7 +175,8 @@ public class PieceController : MonoBehaviour
         {
             healthSystem = GameObject.Find("HealthSystem");
         }
-        var prefab = Resources.Load<GameObject>("Prefab/Health/Health");
+
+        var prefab = Resources.Load<GameObject>(Team == 0 ? "Prefab/Health/RedHealth" : "Prefab/Health/BlueHealth");
         healthUI = Instantiate<GameObject>(prefab, healthSystem.transform);
         healthUI.GetComponent<HealthController>().Init(this);
     }
@@ -267,7 +276,7 @@ public class PieceController : MonoBehaviour
                     if (card != null)
                     {
                         var ui = card.GetComponent<CardBaseController>().ui;
-                        if(ui != null)
+                        if (ui != null)
                         {
                             ui.GetComponent<Animator>().SetTrigger("FrontToBack");
                         }
@@ -312,8 +321,6 @@ public class PieceController : MonoBehaviour
         if (state == PieceState.Idle)
         {
             state = PieceState.Attack;
-            // AnimatorController.SetBool("PieceAttack",true);
-            // AnimatorController.ChangeAnimation(PlayerAnimations.Attack1.ToString());
             this.applyDamage = applyDamage;
             StartCoroutine("AttackAction");
         }
@@ -322,6 +329,7 @@ public class PieceController : MonoBehaviour
     IEnumerator AttackAction()
     {
         AnimatorController.ChangeAnimation(PlayerAnimations.Attack2.ToString());
+        AnimatorController.SetFlipX(Target.transform.position.x < transform.position.x);
         yield return new WaitForSeconds(attackInterval);
         if (state == PieceState.Attack && this.applyDamage != null)
         {
@@ -365,6 +373,7 @@ public class PieceController : MonoBehaviour
         // AnimatorController.Rebind();
         // AnimatorController.Update(0f);
         AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
+        AnimatorController.SetFlipX(Team == 1);
     }
 
     private void OnDestroy()
@@ -393,6 +402,7 @@ public class PieceController : MonoBehaviour
     IEnumerator MoveStep()
     {
         var percent = 0f;
+        AnimatorController.SetFlipX(Target.transform.position.x < transform.position.x);
         while (state == PieceState.Move)
         {
             percent += Time.deltaTime * moveSpeed;
