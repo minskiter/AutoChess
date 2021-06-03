@@ -114,7 +114,7 @@ namespace TMPro.Examples
 
                 float dottedLineSize = 6;
 
-                // Get Bottom Left and Top Right position of the current character
+                // Get Bottom Left and Top Right position of the CurrentMap character
                 Vector3 bottomLeft = m_Transform.TransformPoint(characterInfo.bottomLeft);
                 Vector3 topLeft = m_Transform.TransformPoint(new Vector3(characterInfo.topLeft.x, characterInfo.topLeft.y, 0));
                 Vector3 topRight = m_Transform.TransformPoint(characterInfo.topRight);

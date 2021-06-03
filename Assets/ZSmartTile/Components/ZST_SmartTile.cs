@@ -35,7 +35,7 @@ public class ZST_SmartTile : MonoBehaviour {
 	private Sprite[] sprites_cornerConvex_Prev;
 	private Sprite[] sprites_cornerConcave_Prev;
 
-	// we use coords to map tiles to row/col space
+	// we use coords to Map tiles to row/col space
 	public struct Coord {
 		public Coord(int _row, int _col) {
 			row = _row;
@@ -155,7 +155,7 @@ public class ZST_SmartTile : MonoBehaviour {
 		// Hide the children! Quick! Before they find out!
 		HideChildren();
 
-		// we add tiles so that the map manager knows about them
+		// we add tiles so that the Map manager knows about them
 		ZST_MapManager.SharedInstance.AddTile(this);
 
 		// we want to adjust everything when this is added so that it fits in place
@@ -164,7 +164,7 @@ public class ZST_SmartTile : MonoBehaviour {
 
 	void Update() {
 
-		// for now, we don't want to update sprites during runtime; the map manager's also got a similar block up; YAY REDUNDANCY :D
+		// for now, we don't want to update sprites during runtime; the Map manager's also got a similar block up; YAY REDUNDANCY :D
 		if (Application.isPlaying) {return;}
 
 		// we call this in case we have any tags to update
@@ -189,7 +189,7 @@ public class ZST_SmartTile : MonoBehaviour {
 		// we can safely say that we're not mid-update at this point, since we've already used that data
 		midUpdate = false;
 
-		// adding the tag tells the map manager 'update anything with this tag'
+		// adding the tag tells the Map manager 'update anything with this tag'
 		if (doUpdate) {ZST_MapManager.SharedInstance.AddUpdateTag(tileTag);}
 
 		// we AGGRESSIVELY set the position of the quadrants so that the user cannot accidentally move them
@@ -241,10 +241,10 @@ public class ZST_SmartTile : MonoBehaviour {
 			}
 		}
 
-		// the tile should be romeved from the map so that future updates don't include it
+		// the tile should be romeved from the Map so that future updates don't include it
 		ZST_MapManager.SharedInstance.RemoveTile(this);
 
-		// we also have to update the map, since neighbors could be affected
+		// we also have to update the Map, since neighbors could be affected
 		ZST_MapManager.SharedInstance.AddUpdateTag(tileTag);
 	}
 

@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.Tracing;
+using System.Linq;
+using Assets.Scripts.Data;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MapEditor : MonoBehaviour
 {
-    public Tilemap Map; // The Map
+    public Tilemap Map; // The GameMap
 
     public Tile cellTile; // the style of tile
+
+    public GameObject PieceArea;
 
     // judge if this init
     private bool init = false;
@@ -22,6 +27,21 @@ public class MapEditor : MonoBehaviour
     private bool[,] _map; // true if the cell exists, otherwise false
 
     private PieceController[,] _pieceLocates; // piece locate 
+
+    public List<PieceController> Pieces
+    {
+        get
+        {
+            var list = new List<PieceController>();
+            foreach (var pieceController in _pieceLocates)
+            {
+                if (pieceController != null)
+                    list.Add(pieceController);
+            }
+
+            return list;
+        }
+    }
 
     private bool[,] _canPlacePiece; // the cell which player can place
 
@@ -36,12 +56,12 @@ public class MapEditor : MonoBehaviour
     public int maxPieces = 5;
 
 
-    private List<Vector3Int> forwards3 = new List<Vector3Int>
+    private readonly List<Vector3Int> _forwards3 = new List<Vector3Int>
     {
         Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right
     };
 
-    private List<Vector2Int> forwards2 = new List<Vector2Int>
+    private readonly List<Vector2Int> _forwards2 = new List<Vector2Int>
     {
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
     };
@@ -49,6 +69,38 @@ public class MapEditor : MonoBehaviour
     void OnEnable()
     {
         InitTileMap();
+    }
+
+    public void LoadMap(GameMap map)
+    {
+        height = map.Height;
+        width = map.Width;
+        init = false;
+        InitTileMap();
+        for (var row = 0; row < map.Height; ++row)
+        {
+            for (var col = 0; col < map.Width; ++col)
+            {
+                var cell = map.Map[row, col];
+                if (cell != null && !string.IsNullOrWhiteSpace(cell))
+                {
+                    var piece = cell.Split('|');
+                    var piecePrefab = DataManager.Instance.PiecePrefabs[int.Parse(piece[1])]
+                        .FirstOrDefault(e => (e != null ? e.GetComponent<PieceController>().pieceName : null) == piece[0]);
+                    if (piecePrefab != null)
+                    {
+                        var pieceInstance = Instantiate(piecePrefab, PieceArea.transform);
+                        var pieceController = pieceInstance.GetComponent<PieceController>();
+                        pieceController.OriginPos = new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0) + pieceController.offset;
+                        pieceController.ChangeTeam(1);
+                        pieceController.initHealthUI();
+                        pieceController.Reset();
+                        LayerTool.ChangeLayer(pieceController.transform,3);
+                        PutPiece(new Vector3Int(col + mapRect.xMin, row + mapRect.yMin, 0), pieceController);
+                    }
+                }
+            }
+        }
     }
 
     public bool canPlace(Vector3Int position, bool add = false)
@@ -72,7 +124,7 @@ public class MapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// Initialize map
+    /// Initialize Map
     /// </summary>
     public void InitTileMap()
     {
@@ -162,7 +214,7 @@ public class MapEditor : MonoBehaviour
         while (queue.Count > 0)
         {
             var front = queue.Dequeue();
-            foreach (var direction in forwards2)
+            foreach (var direction in _forwards2)
             {
                 var next = front + direction;
                 var nextInRect = next - mapRect.min;
@@ -219,7 +271,7 @@ public class MapEditor : MonoBehaviour
             {
                 if (leftTileCount != 0)
                 {
-                    foreach (var forward in forwards3)
+                    foreach (var forward in _forwards3)
                     {
                         var nxt = new Vector3Int(x, y, 0) + forward;
                         if (nxt.x >= 0 && nxt.y >= 0 && nxt.x < width && nxt.y < height && _map[nxt.y, nxt.x])

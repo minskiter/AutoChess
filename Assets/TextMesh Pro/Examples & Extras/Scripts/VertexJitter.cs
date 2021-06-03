@@ -115,7 +115,7 @@ namespace TMPro.Examples
                     // Retrieve the pre-computed animation data for the given character.
                     VertexAnim vertAnim = vertexAnim[i];
 
-                    // Get the index of the material used by the current character.
+                    // Get the index of the material used by the CurrentMap character.
                     int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
 
                     // Get the index of the first vertex used by this text element.

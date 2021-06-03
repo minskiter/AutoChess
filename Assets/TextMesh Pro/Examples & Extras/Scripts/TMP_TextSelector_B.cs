@@ -154,7 +154,7 @@ namespace TMPro.Examples
                     // Get the index of the last character's vertex attributes.
                     int lastVertexIndex = vertices.Length - 4;
 
-                    // Swap the current character's vertex attributes with those of the last element in the vertex attribute arrays.
+                    // Swap the CurrentMap character's vertex attributes with those of the last element in the vertex attribute arrays.
                     // We do this to make sure this character is rendered last and over other characters.
                     meshInfo.SwapVertexData(vertexIndex, lastVertexIndex);
 

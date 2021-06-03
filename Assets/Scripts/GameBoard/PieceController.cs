@@ -46,7 +46,7 @@ public class PieceController : MonoBehaviour
     public int cost;
 
 
-    // current health
+    // CurrentMap health
     private int health;
 
     // GUI Responsive 
@@ -169,11 +169,16 @@ public class PieceController : MonoBehaviour
         yield break;
     }
 
-    void initHealthUI()
+    public void initHealthUI()
     {
         if (healthSystem == null)
         {
             healthSystem = GameObject.Find("HealthSystem");
+        }
+
+        if (healthUI != null)
+        {
+            Destroy(healthUI);
         }
 
         var prefab = Resources.Load<GameObject>(Team == 0 ? "Prefab/Health/RedHealth" : "Prefab/Health/BlueHealth");

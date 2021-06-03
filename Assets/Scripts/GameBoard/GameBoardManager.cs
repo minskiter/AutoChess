@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Assets.Scripts.Data;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -22,7 +24,6 @@ public class GameBoardManager : MonoBehaviour
 
     public List<PieceController> _piecesList;
 
-    [NonSerialized]
     public MapEditor map;
 
     private IEnumerator<PieceController> currentPiece;
@@ -88,11 +89,8 @@ public class GameBoardManager : MonoBehaviour
     /// </summary>
     void Reset()
     {
-        if (map != null)
-        {
-            map.ResetPieces();
-            _piecesList.Clear();
-        }
+        map.ResetPieces();
+        _piecesList.Clear();
     }
 
     /// <summary>
@@ -116,26 +114,23 @@ public class GameBoardManager : MonoBehaviour
         }
     }
 
+    public void LoadMap(GameMap map)
+    {
+        this.map.LoadMap(map);
+        _piecesList = this.map.Pieces;
+        SetDraggable(false, 1);
+    }
+
     void Start()
     {
-        map = GetComponentInChildren<Tilemap>(true).GetComponent<MapEditor>();
-        map.InitTileMap();
-        // SetDefault Current Piece;   
-        if (_piecesList == null || _piecesList.Count == 0)
+        _piecesList ??= new List<PieceController>();
+        if (DataManager.Instance.CurrentMap != null)
         {
-            var pieces = GameObject.Find("Pieces");
-            foreach (var piece in pieces.GetComponentsInChildren<PieceController>())
-            {
-                _piecesList.Add(piece);
-            }
+            LoadMap(DataManager.Instance.CurrentMap);
         }
-        foreach (var piece in _piecesList)
-        {
-            map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece);
-        }
-        currentPiece = _piecesList.GetEnumerator();
         StartCoroutine(Battle());
     }
+
 
     public PieceController AddPiece(PieceController piece)
     {
@@ -166,16 +161,16 @@ public class GameBoardManager : MonoBehaviour
         }
         if (pieces.Count >= 2)
         {
-            if (dataManager.piecePrefabs.ContainsKey(piece.star + 1))
+            if (dataManager.PiecePrefabs.ContainsKey(piece.star + 1))
             {
-                var list = dataManager.piecePrefabs[piece.star + 1];
-                var uppiece = list.Find(e => e.GetComponent<PieceController>().pieceName == piece.pieceName);
-                if (uppiece != null)
+                var list = dataManager.PiecePrefabs[piece.star + 1];
+                var upgradePiece = list.Find(e => e.GetComponent<PieceController>().pieceName == piece.pieceName);
+                if (upgradePiece != null)
                 {
-                    var uppieceInstance = Instantiate(uppiece);
-                    uppieceInstance.transform.position = piece.transform.position;
-                    var controller = uppieceInstance.GetComponent<PieceController>();
-                    LayerTool.ChangeLayer(uppieceInstance.transform, 3);
+                    var pieceInstance = Instantiate(upgradePiece);
+                    pieceInstance.transform.position = piece.transform.position;
+                    var controller = pieceInstance.GetComponent<PieceController>();
+                    LayerTool.ChangeLayer(pieceInstance.transform, 3);
                     foreach (var p in pieces)
                     {
                         map.PutPiece(Vector3Int.RoundToInt(p.CurrentPosition - p.offset), null);
@@ -192,12 +187,7 @@ public class GameBoardManager : MonoBehaviour
 
     public int GetAllTeamHealth(int team)
     {
-        int cnt = 0;
-        foreach (var piece in _piecesList)
-        {
-            if (piece.Team == team) cnt += piece.Health;
-        }
-        return cnt;
+        return _piecesList.Where(piece => piece.Team == team).Sum(piece => piece.Health);
     }
 
 
@@ -224,6 +214,7 @@ public class GameBoardManager : MonoBehaviour
 
     public IEnumerator Battle()
     {
+        currentPiece = _piecesList.GetEnumerator();
         while (true)
         {
             if (state == GameState.Battle)

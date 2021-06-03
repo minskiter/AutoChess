@@ -24,12 +24,8 @@ public class CardManager : MonoBehaviour
         {
             foreach (var card in Cards)
             {
-                if (card.cardItem && card.cardItem.transform.parent == card.transform)
-                {
-                    Destroy(card.cardItem);
-                }
                 var ui = card.GetComponent<CardBaseController>().ui;
-                if (ui != null )
+                if (ui != null)
                 {
                     Animator ui_Animator = ui.GetComponent<Animator>();
                     if (ui_Animator.GetCurrentAnimatorStateInfo(0).IsName("FrontToBack"))
@@ -37,19 +33,35 @@ public class CardManager : MonoBehaviour
                         ui_Animator.SetTrigger("BackToFront");
                     }
                 }
-                var cardItem = GetRandomCard(1);
-                var item = Instantiate(cardItem);
-                item.transform.localScale = new Vector3(.3f, .3f, 1);
-                item.transform.parent = card.gameObject.transform;
-                item.transform.position = card.transform.position;
-                LayerTool.ChangeLayer(item.transform, 3);
-                var controller = item.GetComponent<PieceController>();
-                controller.placeable = true;
-                controller.OriginPos = item.transform.position;
-                controller.Reset();
-                card.cardItem = item;
             }
+
+            StartCoroutine(GetCards(new WaitForSeconds(1)));
         }
+    }
+
+    IEnumerator GetCards(WaitForSeconds seconds)
+    {
+        yield return seconds;
+        foreach (var card in Cards)
+        {
+            if (card.cardItem && card.cardItem.transform.parent == card.transform)
+            {
+                Destroy(card.cardItem);
+            }
+
+            var cardItem = GetRandomCard(1);
+            var item = Instantiate(cardItem);
+            item.transform.localScale = new Vector3(.3f, .3f, 1);
+            item.transform.parent = card.gameObject.transform;
+            item.transform.position = card.transform.position;
+            LayerTool.ChangeLayer(item.transform, 3);
+            var controller = item.GetComponent<PieceController>();
+            controller.placeable = true;
+            controller.OriginPos = item.transform.position;
+            controller.Reset();
+            card.cardItem = item;
+        }
+        yield break;
     }
 
     public void LoadCardData()
@@ -83,7 +95,7 @@ public class CardManager : MonoBehaviour
 
     GameObject GetRandomCard(int star)
     {
-        var cardData = DataManager.Instance.piecePrefabs;
+        var cardData = DataManager.Instance.PiecePrefabs;
         if (cardData.ContainsKey(star))
         {
             return cardData[star][Random.Range(0, cardData[star].Count)];

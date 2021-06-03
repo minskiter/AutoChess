@@ -95,7 +95,7 @@ namespace TMPro.Examples
             {
                 currentWord = counter % (totalWordCount + 1);
 
-                // Get last character index for the current word.
+                // Get last character index for the CurrentMap word.
                 if (currentWord == 0) // Display no words.
                     visibleCount = 0;
                 else if (currentWord < totalWordCount) // Display all other words with the exception of the last one.

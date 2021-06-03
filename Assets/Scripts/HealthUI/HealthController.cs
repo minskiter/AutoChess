@@ -30,6 +30,15 @@ public class HealthController : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (init)
+        {
+            Target.OnHealthUpdate -= Target_OnHealthUpdate;
+            Target.OnDie -= Target_OnDie;
+        }
+    }
+
     private IEnumerator FollowTarget()
     {
         while (true)
@@ -45,7 +54,7 @@ public class HealthController : MonoBehaviour
 
     private void Target_OnDie()
     {
-        gameObject.SetActive(false);
+            gameObject.SetActive(false);
     }
 
     private void Target_OnHealthUpdate(int preValue, int value)

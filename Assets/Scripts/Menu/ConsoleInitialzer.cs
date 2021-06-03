@@ -10,6 +10,5 @@ public class ConsoleInitialzer : MonoBehaviour
     private void Awake()
     {
         DataManager.Instance.Init();
-        Debug.Log("Load data.");
     }
 }
