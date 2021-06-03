@@ -96,7 +96,7 @@ public class MapEditor : MonoBehaviour
                         pieceController.initHealthUI();
                         pieceController.Reset();
                         LayerTool.ChangeLayer(pieceController.transform,3);
-                        PutPiece(new Vector3Int(col + mapRect.xMin, row + mapRect.yMin, 0), pieceController);
+                        PutPiece(Vector3Int.RoundToInt(new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0)), pieceController);
                     }
                 }
             }

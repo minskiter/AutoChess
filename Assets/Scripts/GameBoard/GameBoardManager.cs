@@ -72,15 +72,25 @@ public class GameBoardManager : MonoBehaviour
     /// </summary>
     public void StartBattle()
     {
-        if (state == GameState.Battle)
+        switch (state)
         {
-            state = GameState.Pause;
-        }
-        else if (state == GameState.Start || state == GameState.Pause)
-        {
-            state = GameState.Battle;
-            SetDraggable(false);
-            currentPiece = _piecesList.GetEnumerator();
+            case GameState.Battle:
+                {
+                    state = GameState.Pause;
+                    break;
+                }
+            case GameState.Pause:
+                {
+                    state = GameState.Battle;
+                    break;
+                }
+            case GameState.Start:
+                {
+                    state = GameState.Battle;
+                    SetDraggable(false);
+                    currentPiece = _piecesList.GetEnumerator();
+                    break;
+                }
         }
     }
 
