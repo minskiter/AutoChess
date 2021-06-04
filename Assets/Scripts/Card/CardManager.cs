@@ -48,7 +48,6 @@ public class CardManager : MonoBehaviour
             {
                 Destroy(card.cardItem);
             }
-
             var cardItem = GetRandomCard(1);
             var item = Instantiate(cardItem);
             item.transform.localScale = new Vector3(.3f, .3f, 1);
@@ -60,6 +59,13 @@ public class CardManager : MonoBehaviour
             controller.OriginPos = item.transform.position;
             controller.Reset();
             card.cardItem = item;
+            var ui = card.GetComponent<CardBaseController>().ui;
+            if (ui != null)
+            {
+                var UIEvent = ui.GetComponent<CardUIEvent>();
+                UIEvent.name = controller.pieceName;
+                UIEvent.cost = controller.cost;
+            }
         }
         yield break;
     }
@@ -79,6 +85,13 @@ public class CardManager : MonoBehaviour
             controller.OriginPos = item.transform.position;
             controller.Reset();
             card.cardItem = item;
+            var ui = card.GetComponent<CardBaseController>().ui;
+            if (ui != null)
+            {
+                var UIEvent = ui.GetComponent<CardUIEvent>();
+                UIEvent.name = controller.pieceName;
+                UIEvent.cost = controller.cost;
+            }
         }
     }
 

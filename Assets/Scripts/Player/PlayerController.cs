@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Spend Money
+    /// Spend MoneyUI
     /// </summary>
     /// <param name="money"></param>
     /// <returns></returns>
