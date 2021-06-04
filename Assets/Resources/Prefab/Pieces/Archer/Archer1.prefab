@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 298640695}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FirePoint_Shoot2
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 499331803}
   - component: {fileID: 499331802}
   - component: {fileID: 499331801}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CharacterGFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 801084240}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FirePoint_Shoot1
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -193,7 +193,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1150677144}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ArrowsFirePoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1845631139}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FirePoint_Shoot3
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 7412442631814691674}
   - component: {fileID: -2070435847978262499}
   - component: {fileID: 2131884334085797422}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Archer1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,12 +364,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   pieceName: 
+  cost: 0
   healthUI: {fileID: 0}
   healthSystem: {fileID: 0}
   attack: 1
   star: 1
   attackInterval: 1
   attackDistance: 1
+  IsRemoteAttack: 1
   moveSpeed: 2
   offset: {x: 0.5, y: 0.3, z: 0}
   draggable: 0

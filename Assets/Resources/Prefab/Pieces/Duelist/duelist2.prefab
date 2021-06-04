@@ -96,6 +96,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
   - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
   - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
+  - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -302,11 +303,11 @@ MonoBehaviour:
   Quiver: 0
   Staff: 1
   DuelistOffhand: 8
-  Armor: 0
-  Helmet: 0
-  Shoulder: 0
-  Arm: 0
-  Feet: 0
+  Armor: 12
+  Helmet: 7
+  Shoulder: 7
+  Arm: 18
+  Feet: 14
   Hair: 0
   Face: 0
   IsAutoUpdate: 1
@@ -364,6 +365,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   pieceName: 
+  cost: 0
   healthUI: {fileID: 0}
   healthSystem: {fileID: 0}
   attack: 1

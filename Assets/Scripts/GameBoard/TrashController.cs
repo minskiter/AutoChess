@@ -13,12 +13,15 @@ public class TrashController : MonoBehaviour
         if (manager != null)
         {
             var controller = other.GetComponent<PieceController>();
-            if (controller.draggable)
+            if (controller != null)
             {
-                manager._piecesList.Remove(controller);
-                manager.map.PutPiece(Vector3Int.RoundToInt(controller.OriginPos - controller.offset), null);
-                player.Gold += controller.cost / 2;
-                Destroy(controller.gameObject);
+                if (controller.draggable)
+                {
+                    manager._piecesList.Remove(controller);
+                    manager.map.PutPiece(Vector3Int.RoundToInt(controller.OriginPos - controller.offset), null);
+                    player.Gold += controller.cost / 2;
+                    Destroy(controller.gameObject);
+                }
             }
         }
     }

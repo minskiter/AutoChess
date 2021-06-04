@@ -92,6 +92,8 @@ public class PieceController : MonoBehaviour
     private float attackDistance = 1;
     public float AttackDistance => attackDistance;
 
+    public bool IsRemoteAttack;
+
     [Header("Move")]
     // move
     [SerializeField]
@@ -331,16 +333,47 @@ public class PieceController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Ball")
+        {
+            var controller = collision.gameObject.GetComponent<BallController>();
+            if (controller.Team != Team)
+            {
+                if (controller.Attack.HasValue)
+                    ApplyAttacked(controller.Attack.Value);
+                controller.MaxAttackEnemy--;
+                if (controller.MaxAttackEnemy <= 0)
+                {
+                    //collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    Destroy(collision.gameObject);
+                }
+            }
+        }
+    }
+
     IEnumerator AttackAction()
     {
         AnimatorController.ChangeAnimation(PlayerAnimations.Attack2.ToString());
         AnimatorController.SetFlipX(Target.transform.position.x < transform.position.x);
         yield return new WaitForSeconds(attackInterval);
-        if (state == PieceState.Attack && this.applyDamage != null)
+        if (!IsRemoteAttack)
         {
-            state = PieceState.Idle;
-            this.applyDamage(attack);
-            AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
+            if (state == PieceState.Attack && this.applyDamage != null)
+            {
+                state = PieceState.Idle;
+                this.applyDamage(attack);
+                AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
+            }
+
+        }
+        else
+        {
+            if (state == PieceState.Attack)
+            {
+                state = PieceState.Idle;
+                AnimatorController.ChangeAnimation(PlayerAnimations.Idle.ToString());
+            }
         }
         this.applyDamage = null;
         yield break;

@@ -25,7 +25,7 @@ public class CharacterAnimator : MonoBehaviour
     GearEquipper AccGE;
 
     public GameObject ArrowPrefab;
-    bool IsFireArrow=true;
+    bool IsFireArrow = true;
 
     void Awake()
     {
@@ -69,20 +69,31 @@ public class CharacterAnimator : MonoBehaviour
                 ArrowStartingPosition = transform.Find("ArrowsFirePoints").Find("FirePoint_Shoot3").position;
                 Angle = 50;
             }
-            GameObject newArrow = Instantiate(ArrowPrefab, ArrowStartingPosition, Quaternion.Euler(0, 0, 90 + Angle));
-            newArrow.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Cos(Angle*Mathf.PI/180), Mathf.Sin(Angle *  Mathf.PI/180)) *3200;
-        }
 
+            GameObject newArrow = Instantiate(ArrowPrefab, ArrowStartingPosition, Quaternion.Euler(0, 0, 90 + Angle));
+            var controller = newArrow.GetComponent<BallController>();
+            var piece = gameObject.GetComponent<PieceController>();
+            controller.Attack = piece.attack;
+            controller.Team = piece.Team;
+            var from = new Vector2(piece.transform.position.x, piece.transform.position.y);
+            var to = new Vector2(piece.Target.transform.position.x, piece.Target.transform.position.y);
+            Angle = Vector2.Angle(to - from, Vector2.right) *
+                    (piece.transform.position.y > piece.Target.transform.position.y ? -1f : 1f);
+            newArrow.transform.parent = gameObject.transform;
+            newArrow.transform.Rotate(0f, 0f, Angle);
+            newArrow.GetComponent<Rigidbody2D>().velocity =
+                new Vector2(Mathf.Cos(Angle * Mathf.PI / 180), Mathf.Sin(Angle * Mathf.PI / 180)) * 5f;
+        }
     }
 
     public void FireArrow_Archer()
     {
         IsFireArrow = !IsFireArrow;
     }
-    
+
 
     void CreateAnimationsDictionary()
-    { 
+    {
         //Fills the dicitionaries with all the animations of each job
 
         WarriorAnimations.Add(PlayerAnimations.Attack1, "Attack1");
@@ -166,26 +177,22 @@ public class CharacterAnimator : MonoBehaviour
         AnimationManager();
     }
 
-    public void SetFlipX(bool flag){
-        if (flag){
-            characterAnimator.skeleton.ScaleX = -Mathf.Abs(characterAnimator.skeleton.ScaleX);
-        }else{
-            characterAnimator.skeleton.ScaleX = Mathf.Abs(characterAnimator.skeleton.ScaleX);
-        }
-    }
-
     //Runs the required animation using SetAnimation spine function
     void AnimationManager()
     {
         bool IsLoop = AnimationToPlay == PlayerAnimations.Death ? false : true;
-        characterAnimator.skeleton.SetToSetupPose();
         characterAnimator.AnimationState.SetAnimation(0, JobsAnimations[AccGE.Job][AnimationToPlay], IsLoop);
+    }
+
+    public void SetFlipX(bool flag)
+    {
+        characterAnimator.Skeleton.ScaleX = flag ? -1f : 1f;
     }
 
 }
 public enum PlayerAnimations
 {
-    Idle, Walk, Attack1, Death, FullJump,Jump1, Jump2, Jump3, Hurt, Run, Attack2, Special, Buff
+    Idle, Walk, Attack1, Death, FullJump, Jump1, Jump2, Jump3, Hurt, Run, Attack2, Special, Buff
 }
 public enum Jobs
 {

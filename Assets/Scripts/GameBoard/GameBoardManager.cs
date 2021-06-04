@@ -286,6 +286,10 @@ public class GameBoardManager : MonoBehaviour
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        piece.Target = null;
+                                    }
                                 }
                                 else if (Vector3.Distance(piece.Target.CurrentPosition, piece.CurrentPosition) < piece.AttackDistance + 6e-6)
                                 {
