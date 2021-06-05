@@ -96,8 +96,6 @@ MeshRenderer:
   - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
   - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
   - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
-  - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
-  - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -260,10 +258,10 @@ GameObject:
   - component: {fileID: 1139350256389534614}
   - component: {fileID: 6153768875183356172}
   - component: {fileID: 7412442631814691674}
-  - component: {fileID: -4396426553921753630}
-  - component: {fileID: 7503482781634529565}
+  - component: {fileID: -2673636953775285355}
+  - component: {fileID: -3837059741021578301}
   m_Layer: 0
-  m_Name: BaseWarrior3
+  m_Name: Jagulas_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -298,19 +296,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Job: 0
-  Melee: 7
-  Shield: 12
-  Bow: 0
+  Melee: 9
+  Shield: 10
+  Bow: 18
   Quiver: 0
-  Staff: 0
-  DuelistOffhand: 0
-  Armor: 10
-  Helmet: 24
-  Shoulder: 6
-  Arm: 6
-  Feet: 6
-  Hair: 4
-  Face: 6
+  Staff: 15
+  DuelistOffhand: 28
+  Armor: 15
+  Helmet: 15
+  Shoulder: 15
+  Arm: 15
+  Feet: 15
+  Hair: 0
+  Face: 7
   IsAutoUpdate: 1
 --- !u!114 &7412442631814691674
 MonoBehaviour:
@@ -326,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyJob: 0
   ArrowPrefab: {fileID: 42269432641808743, guid: bc06286fb4ae27745b357c9f6f22f6b0, type: 3}
---- !u!61 &-4396426553921753630
+--- !u!61 &-2673636953775285355
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,7 +337,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.411575, y: 1.7666657}
+  m_Offset: {x: -0.14822567, y: 1.7673059}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -350,9 +348,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.475457, y: 3.9431481}
+  m_Size: {x: 2.4366486, y: 3.9873176}
   m_EdgeRadius: 0
---- !u!114 &7503482781634529565
+--- !u!114 &-3837059741021578301
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -364,8 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f77d045f0dcd7648add8dd1c4350b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
-  pieceName: 
+  maxHealth: 15
+  pieceName: warrior
   cost: 0
   healthUI: {fileID: 0}
   healthSystem: {fileID: 0}
@@ -374,7 +372,7 @@ MonoBehaviour:
   attackInterval: 1
   attackDistance: 1
   IsRemoteAttack: 0
-  moveSpeed: 2
+  moveSpeed: 3
   offset: {x: 0.5, y: 0.3, z: 0}
   draggable: 0
   Team: 0

@@ -51,9 +51,6 @@ public class CharacterAnimator : MonoBehaviour
         {
             //Shoots a real arrow when the arrow in the animation leaves the bow
 
-            if (IsFireArrow == false)
-                return;
-
             Vector3 ArrowStartingPosition = Vector3.zero;
             float Angle = 0;
             if (trackEntry.Animation.ToString() == "Shoot1")
@@ -69,17 +66,23 @@ public class CharacterAnimator : MonoBehaviour
                 ArrowStartingPosition = transform.Find("ArrowsFirePoints").Find("FirePoint_Shoot3").position;
                 Angle = 50;
             }
-
             GameObject newArrow = Instantiate(ArrowPrefab, ArrowStartingPosition, Quaternion.Euler(0, 0, 90 + Angle));
             var controller = newArrow.GetComponent<BallController>();
             var piece = gameObject.GetComponent<PieceController>();
             controller.Attack = piece.attack;
             controller.Team = piece.Team;
             var from = new Vector2(piece.transform.position.x, piece.transform.position.y);
-            var to = new Vector2(piece.Target.transform.position.x, piece.Target.transform.position.y);
-            Angle = Vector2.Angle(to - from, Vector2.right) *
-                    (piece.transform.position.y > piece.Target.transform.position.y ? -1f : 1f);
-            newArrow.transform.parent = gameObject.transform;
+            if (piece.Target != null)
+            {
+                var to = new Vector2(piece.Target.transform.position.x, piece.Target.transform.position.y);
+                Angle = Vector2.Angle(to - from, Vector2.right) *
+                        (piece.transform.position.y > piece.Target.transform.position.y ? -1f : 1f);
+            }
+            else
+            {
+                Angle = 0;
+            }
+            //newArrow.transform.parent = gameObject.transform;
             newArrow.transform.Rotate(0f, 0f, Angle);
             newArrow.GetComponent<Rigidbody2D>().velocity =
                 new Vector2(Mathf.Cos(Angle * Mathf.PI / 180), Mathf.Sin(Angle * Mathf.PI / 180)) * 5f;

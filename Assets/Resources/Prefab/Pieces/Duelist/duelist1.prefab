@@ -258,8 +258,8 @@ GameObject:
   - component: {fileID: 1139350256389534614}
   - component: {fileID: 6153768875183356172}
   - component: {fileID: 7412442631814691674}
-  - component: {fileID: 5189967998106024278}
   - component: {fileID: 6727576496568017892}
+  - component: {fileID: 5189967998106024278}
   m_Layer: 0
   m_Name: duelist1
   m_TagString: Untagged
@@ -324,32 +324,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyJob: 3
   ArrowPrefab: {fileID: 42269432641808743, guid: bc06286fb4ae27745b357c9f6f22f6b0, type: 3}
---- !u!114 &5189967998106024278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7412442631814691673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f77d045f0dcd7648add8dd1c4350b03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 5
-  pieceName: 
-  healthUI: {fileID: 0}
-  healthSystem: {fileID: 0}
-  attack: 1
-  star: 1
-  attackInterval: 1
-  attackDistance: 1
-  moveSpeed: 2
-  offset: {x: 0.5, y: 0.3, z: 0}
-  draggable: 0
-  placeable: 0
-  Team: 0
-  Target: {fileID: 0}
 --- !u!61 &6727576496568017892
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -376,3 +350,30 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.4366486, y: 3.9873176}
   m_EdgeRadius: 0
+--- !u!114 &5189967998106024278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7412442631814691673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f77d045f0dcd7648add8dd1c4350b03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 550
+  pieceName: "\u8D5B\u7F57"
+  cost: 3
+  healthUI: {fileID: 0}
+  healthSystem: {fileID: 0}
+  attack: 80
+  star: 1
+  attackInterval: 1
+  attackDistance: 1
+  IsRemoteAttack: 0
+  moveSpeed: 1
+  offset: {x: 0.5, y: 0.3, z: 0}
+  draggable: 0
+  Team: 0
+  Target: {fileID: 0}

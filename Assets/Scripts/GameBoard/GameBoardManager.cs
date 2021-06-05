@@ -148,7 +148,13 @@ public class GameBoardManager : MonoBehaviour
         {
             if (playerController.SpendMoney(piece.cost))
             {
-                piece = UpgradePiece(piece);
+                PieceController _old;
+                do
+                {
+                    _old = piece;
+                    piece = UpgradePiece(piece);
+                } while (_old != piece);
+
                 _piecesList.Add(piece);
                 return piece;
             }

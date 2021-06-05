@@ -93,11 +93,6 @@ MeshRenderer:
   - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
   - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
   - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
-  - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
-  - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
-  - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
-  - {fileID: 2100000, guid: dcf23bca2cbf3644ba90b133a61c8d73, type: 2}
-  - {fileID: 2100000, guid: aebfc9a13fbf1a34ca2c955a25e22278, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -260,10 +255,10 @@ GameObject:
   - component: {fileID: 1139350256389534614}
   - component: {fileID: 6153768875183356172}
   - component: {fileID: 7412442631814691674}
-  - component: {fileID: -4396426553921753630}
-  - component: {fileID: 7503482781634529565}
+  - component: {fileID: 5971062085145118825}
+  - component: {fileID: 8749126253832091022}
   m_Layer: 0
-  m_Name: BaseWarrior3
+  m_Name: Archer3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,20 +292,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2be31b9f9ee9b439dfbb8e417f3652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Job: 0
-  Melee: 7
-  Shield: 12
-  Bow: 0
-  Quiver: 0
+  Job: 1
+  Melee: 0
+  Shield: 1
+  Bow: 7
+  Quiver: 23
   Staff: 0
   DuelistOffhand: 0
-  Armor: 10
+  Armor: 22
   Helmet: 24
-  Shoulder: 6
-  Arm: 6
-  Feet: 6
-  Hair: 4
-  Face: 6
+  Shoulder: 22
+  Arm: 22
+  Feet: 22
+  Hair: 0
+  Face: 0
   IsAutoUpdate: 1
 --- !u!114 &7412442631814691674
 MonoBehaviour:
@@ -324,9 +319,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bba9ebabf64764cbf166968f7deb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MyJob: 0
+  MyJob: 1
   ArrowPrefab: {fileID: 42269432641808743, guid: bc06286fb4ae27745b357c9f6f22f6b0, type: 3}
---- !u!61 &-4396426553921753630
+--- !u!61 &5971062085145118825
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,7 +334,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.411575, y: 1.7666657}
+  m_Offset: {x: -0.31925535, y: 1.7673059}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -350,9 +345,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.475457, y: 3.9431481}
+  m_Size: {x: 2.277021, y: 3.941709}
   m_EdgeRadius: 0
---- !u!114 &7503482781634529565
+--- !u!114 &8749126253832091022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -373,7 +368,7 @@ MonoBehaviour:
   star: 1
   attackInterval: 1
   attackDistance: 1
-  IsRemoteAttack: 0
+  IsRemoteAttack: 1
   moveSpeed: 2
   offset: {x: 0.5, y: 0.3, z: 0}
   draggable: 0
