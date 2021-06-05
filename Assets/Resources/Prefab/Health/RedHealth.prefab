@@ -364,7 +364,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   bar: {fileID: 5834017244654320481}
   slider: {fileID: 9199218756044057946}
-  offset: {x: 0, y: 1.2}
+  offset: {x: -0.4, y: 1.2}
 --- !u!1 &8449373867027002127
 GameObject:
   m_ObjectHideFlags: 0

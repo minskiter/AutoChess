@@ -105,10 +105,29 @@ public class PieceController : MonoBehaviour
     // true if the game object is darggable, otherwise false
     public bool draggable;
 
+    private bool _placeable;
     /// <summary>
     /// card place
     /// </summary>
-    public bool placeable;
+    public bool Placeable
+    {
+        get
+        {
+            return _placeable;
+        }
+        set
+        {
+            _placeable = value;
+            if (value)
+            {
+                healthUI?.SetActive(false);
+            }
+            else
+            {
+                healthUI?.SetActive(true);
+            }
+        }
+    }
 
     [Header("Team")]
 
@@ -241,7 +260,7 @@ public class PieceController : MonoBehaviour
             curPosition.z = 0;
             transform.position = curPosition;
         }
-        if (placeable)
+        if (Placeable)
         {
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
@@ -271,7 +290,7 @@ public class PieceController : MonoBehaviour
                 transform.position = originPos;
             }
         }
-        if (placeable)
+        if (Placeable)
         {
             var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
             if (gameBoardManager.map.canPlace(currentCellPosition, true))
@@ -293,7 +312,7 @@ public class PieceController : MonoBehaviour
                     add.transform.localScale = new Vector3(.3f, .3f, .3f);
                     add.originPos = add.transform.position;
                     add.targetPos = add.transform.position;
-                    add.placeable = false;
+                    add.Placeable = false;
                     add.draggable = true;
                     gameBoardManager.map.PutPiece(currentCellPosition, add);
                 }

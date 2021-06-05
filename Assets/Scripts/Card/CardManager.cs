@@ -55,7 +55,7 @@ public class CardManager : MonoBehaviour
             item.transform.position = card.transform.position;
             LayerTool.ChangeLayer(item.transform, 3);
             var controller = item.GetComponent<PieceController>();
-            controller.placeable = true;
+            controller.Placeable = true;
             controller.OriginPos = item.transform.position;
             controller.Reset();
             card.cardItem = item;
@@ -81,7 +81,7 @@ public class CardManager : MonoBehaviour
             item.transform.position = card.transform.position;
             LayerTool.ChangeLayer(item.transform, 3);
             var controller = item.GetComponent<PieceController>();
-            controller.placeable = true;
+            controller.Placeable = true;
             controller.OriginPos = item.transform.position;
             controller.Reset();
             card.cardItem = item;
@@ -101,7 +101,7 @@ public class CardManager : MonoBehaviour
         {
             if (card.cardItem != null)
             {
-                card.cardItem.GetComponent<PieceController>().placeable = flag;
+                card.cardItem.GetComponent<PieceController>().Placeable = flag;
             }
         }
     }

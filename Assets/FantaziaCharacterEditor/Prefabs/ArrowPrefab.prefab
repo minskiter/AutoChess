@@ -144,5 +144,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0734f022aff27d845a914caa460324c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxAttackEnemy: 1
+  MaxAttackEnemy: 2
   Team: 0

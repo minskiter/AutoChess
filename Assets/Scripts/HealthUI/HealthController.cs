@@ -45,6 +45,11 @@ public class HealthController : MonoBehaviour
         {
             if (Target != null)
             {
+                if (Target.GetComponent<PieceController>().Placeable)
+                {
+                    gameObject.SetActive(false);
+                    yield break;
+                }
                 var pos = Target.transform.position;
                 bar.transform.position = new Vector2(pos.x, pos.y) + offset;
             }
