@@ -19,7 +19,7 @@ public class DataManager
     {
         PiecePrefabs = new Dictionary<int, List<GameObject>>();
         MapLists = new List<GameMap>();
-        var data = CsvLoader.LoadCsv("Data/pieces.csv");
+        var data = CsvLoader.LoadCsv("Data/pieces");
         foreach (DataRow row in data.Rows)
         {
             var name = row["name"].ToString();
@@ -35,10 +35,9 @@ public class DataManager
             PiecePrefabs[star].Add(gameObject);
         }
 
-        var mapNameList = MapLoader.LoadMapPathList("Data/mapList.csv");
+        var mapNameList = MapLoader.LoadMapPathList("Data/mapList");
         foreach (var mapPath in mapNameList)
         {
-            Debug.Log($"load {mapPath}");
             MapLists.Add(MapLoader.LoadMap(mapPath));
         }
     }

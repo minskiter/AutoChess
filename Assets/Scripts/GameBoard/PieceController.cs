@@ -309,6 +309,7 @@ public class PieceController : MonoBehaviour
                     }
                     add.transform.parent = GameObject.Find("Pieces").transform;
                     add.transform.position = currentCellPosition + offset;
+                    add.transform.position -= new Vector3(0, 0, add.transform.position.z);
                     add.transform.localScale = new Vector3(.3f, .3f, .3f);
                     add.originPos = add.transform.position;
                     add.targetPos = add.transform.position;
