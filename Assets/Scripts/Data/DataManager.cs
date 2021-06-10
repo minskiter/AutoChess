@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using Assets.Scripts.Data;
+using Assets.Scripts.Utils;
 using UnityEngine;
 
-public class DataManager
+public class DataManager:GlobalSingleton<DataManager>
 {
-    public static DataManager Instance = new DataManager();
-
     public Dictionary<int, List<GameObject>> PiecePrefabs;
 
     public List<GameMap> MapLists;

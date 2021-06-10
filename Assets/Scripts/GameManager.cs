@@ -1,12 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class GameManager :MonoSingleton<GameManager>
 {
-    // the turn of game
-    public int turn = 1;
+    // the _turn of game
+    private int _turn = 1;
+
+    public int Turn
+    {
+        get
+        {
+            return _turn;
+        }
+        set
+        {
+            _turn = value;
+            if (StageTurnText != null)
+            {
+                StageTurnText.text = _turn.ToString();
+            }
+        }
+    }
 
     // the stage of game
     public int stage = 0;
@@ -17,7 +34,7 @@ public class GameManager : MonoBehaviour
     // the player 
     public PlayerController player;
 
-    public GameObject StageTurnText;
+    public Text StageTurnText;
     public GameObject message;
     public GameObject messageText;
 
@@ -31,8 +48,9 @@ public class GameManager : MonoBehaviour
 
     private GameState state;
 
-    void Awake()
+    override public void Awake()
     {
+        base.Awake();
         manager.WinHandler = WinHanler;
         manager.LossHandler = LossHander;
     }
@@ -43,9 +61,7 @@ public class GameManager : MonoBehaviour
     public void WinHanler()
     {
         state = GameState.Settlement;
-        ++turn;
-       
-        StageTurnText.GetComponent<Text>().text = stage+ "-" + turn;
+        ++Turn;
         message.SetActive(true);
         messageText.GetComponent<Text>().text = "WIN";
         Invoke("HideMessageImage", 1f);
@@ -57,11 +73,10 @@ public class GameManager : MonoBehaviour
     public void LossHander(int damage)
     {
         state = GameState.Settlement;
-        player.TakeDamage(Mathf.RoundToInt(damage / 10f * turn));
+        player.TakeDamage(Mathf.RoundToInt(damage / 10f * _turn));
         player.Gold += Mathf.FloorToInt(Mathf.Min(damage / 2, 10));
-        ++turn;
+        ++Turn;
 
-        StageTurnText.GetComponent<Text>().text = stage + "-" + turn;
         message.SetActive(true);
         messageText.GetComponent<Text>().text = "LOSE";
         Invoke("HideMessageImage", 1f);
@@ -73,8 +88,9 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
-        turn = 0;
+        Turn = 0;
     }
+
     public void HideMessageImage()
     {
         message.SetActive(false);

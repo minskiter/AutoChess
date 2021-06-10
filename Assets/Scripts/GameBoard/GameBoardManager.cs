@@ -44,8 +44,7 @@ public class GameBoardManager : MonoBehaviour
             SetDraggable(true, 0);
             if (winner == 0)
             {
-                if (WinHandler != null)
-                    WinHandler();
+                WinHandler?.Invoke();
             }
             else
             {

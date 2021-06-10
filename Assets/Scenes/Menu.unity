@@ -498,6 +498,38 @@ PrefabInstance:
       propertyPath: m_Name
       value: MenuCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4089710076800568094, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089710076800568094, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089710076800568094, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089710076800568094, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089710076835107550, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: cafb085b70b7d754e92911af072e7d60, type: 3}
+    - target: {fileID: 4089710076882801094, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: cafb085b70b7d754e92911af072e7d60, type: 3}
+    - target: {fileID: 4089710077091185203, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: cafb085b70b7d754e92911af072e7d60, type: 3}
+    - target: {fileID: 4089710077101875685, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: cafb085b70b7d754e92911af072e7d60, type: 3}
     - target: {fileID: 4089710077333693926, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -558,6 +590,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4089710077999345883, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: cafb085b70b7d754e92911af072e7d60, type: 3}
     - target: {fileID: 4089710078171392540, guid: 6c4725d79db4aa340b9e8b67ec417931, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
