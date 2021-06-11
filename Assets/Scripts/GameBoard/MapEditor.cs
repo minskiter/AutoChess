@@ -55,7 +55,6 @@ public class MapEditor : MonoBehaviour
 
     public int maxPieces = 5;
 
-
     private readonly List<Vector3Int> _forwards3 = new List<Vector3Int>
     {
         Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right
@@ -103,19 +102,25 @@ public class MapEditor : MonoBehaviour
         }
     }
 
+    public int GetPieceCount(int Team=0)
+    {
+        int cnt = 0;
+        if (_pieceLocates!=null)
+        foreach (var piece in _pieceLocates)
+        {
+            if (piece != null)
+            {
+                cnt += piece.Team == Team ? 1 : 0;
+            }
+        }
+        return cnt;
+    }
+
     public bool canPlace(Vector3Int position, bool add = false)
     {
         if (add)
         {
-            int cnt = 0;
-            foreach (var piece in _pieceLocates)
-            {
-                if (piece != null)
-                {
-                    if (piece.Team == 0)
-                        ++cnt;
-                }
-            }
+            int cnt = GetPieceCount(0);
             if (cnt + 1 > maxPieces) return false;
         }
 

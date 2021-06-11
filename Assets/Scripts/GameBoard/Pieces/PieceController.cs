@@ -163,9 +163,12 @@ public class PieceController: MonoBehaviour
     // public Animator AnimatorController;
     public CharacterAnimator AnimatorController;
 
+    private DialogController dialogController;
+
     void Awake()
     {
         AnimatorController = GetComponent<CharacterAnimator>();
+        dialogController = GameObject.FindObjectOfType<DialogController>(true);
         SetOriginPosition();
         initHealthUI();
     }
@@ -247,6 +250,31 @@ public class PieceController: MonoBehaviour
         gameObject.SetActive(false);
         OnDie?.Invoke();
         yield break;
+    }
+
+    private bool _doubleclick = false;
+
+    void OnMouseDown()
+    {
+        if (!_doubleclick)
+        {
+            _doubleclick = true;
+            Invoke("CancelClick", .3f);
+        }
+        else
+        {
+            dialogController.Set($"{pieceName}({star})", maxHealth, attack, AttackDistance, moveSpeed, attackInterval, cost);
+            _doubleclick = false;
+            CancelInvoke("CancelClick");
+            if (!dialogController.gameObject.activeSelf)
+                dialogController.gameObject.SetActive(true);
+        }
+    }
+
+    void CancelClick()
+    {
+        Debug.Log("CancelInvoke");
+        _doubleclick = false;
     }
 
     /// <summary>

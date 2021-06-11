@@ -24,12 +24,21 @@ public class CardManager : MonoBehaviour
         {
             foreach (var card in Cards)
             {
+                if (card.cardItem && card.cardItem.transform.parent == card.transform)
+                {
+                    Destroy(card.cardItem);
+                }
                 var ui = card.GetComponent<CardBaseController>().ui;
                 if (ui != null)
                 {
                     Animator ui_Animator = ui.GetComponent<Animator>();
                     if (ui_Animator.GetCurrentAnimatorStateInfo(0).IsName("FrontToBack"))
                     {
+                        ui_Animator.SetTrigger("BackToFront");
+                    }
+                    else
+                    {
+                        ui_Animator.SetTrigger("FrontToBack");
                         ui_Animator.SetTrigger("BackToFront");
                     }
                 }
@@ -44,10 +53,6 @@ public class CardManager : MonoBehaviour
         yield return seconds;
         foreach (var card in Cards)
         {
-            if (card.cardItem && card.cardItem.transform.parent == card.transform)
-            {
-                Destroy(card.cardItem);
-            }
             var cardItem = GetRandomCard(1);
             var item = Instantiate(cardItem);
             item.transform.localScale = new Vector3(.3f, .3f, 1);
