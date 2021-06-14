@@ -10,6 +10,33 @@ public class HealthController : MonoBehaviour
     public RectTransform bar;
     public Slider slider;
 
+    public List<GameObject> stars;
+
+    public int Star
+    {
+        set
+        {
+            switch (value)
+            {
+                case 1:
+                    stars[1].SetActive(true);
+                    stars[0].SetActive(false);
+                    stars[2].SetActive(false);
+                    break;
+                case 2:
+                    stars[1].SetActive(true);
+                    stars[0].SetActive(false);
+                    stars[2].SetActive(true);
+                    break;
+                case 3:
+                    stars[1].SetActive(true);
+                    stars[0].SetActive(true);
+                    stars[2].SetActive(true);
+                    break;
+            }
+        }
+    }
+
     public Vector2 offset;
 
     private bool init = false;
@@ -52,6 +79,7 @@ public class HealthController : MonoBehaviour
                 }
                 var pos = Target.transform.position;
                 bar.transform.position = new Vector2(pos.x, pos.y) + offset;
+                Star = Target.star;
             }
             yield return null;
         }

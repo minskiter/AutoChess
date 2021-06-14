@@ -7,8 +7,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
-public class SceneManager : MonoBehaviour
+public class SceneManager : MonoSingleton<SceneManager>
 {
+
     public void SwitchCheckpoint(string checkPointName)
     {
         if (checkPointName != null)

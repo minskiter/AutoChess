@@ -72,47 +72,56 @@ public class MapEditor : MonoBehaviour
 
     public void LoadMap(GameMap map)
     {
-        height = map.Height;
-        width = map.Width;
-        init = false;
-        InitTileMap();
-        for (var row = 0; row < map.Height; ++row)
+        if (height == map.Height && width == map.Width)
         {
-            for (var col = 0; col < map.Width; ++col)
+            InitTileMap();
+            // 清除所有队伍为1的棋子
+            ClearPiece(1);
+            for (var row = 0; row < map.Height; ++row)
             {
-                var cell = map.Map[row, col];
-                if (cell != null && !string.IsNullOrWhiteSpace(cell))
+                for (var col = 0; col < map.Width; ++col)
                 {
-                    var piece = cell.Split('|');
-                    var piecePrefab = DataManager.Instance.PiecePrefabs[int.Parse(piece[1])]
-                        .FirstOrDefault(e => (e != null ? e.GetComponent<PieceController>().pieceName : null) == piece[0]);
-                    if (piecePrefab != null)
+                    var cell = map.Map[row, col];
+                    if (cell != null && !string.IsNullOrWhiteSpace(cell))
                     {
-                        var pieceInstance = Instantiate(piecePrefab, PieceArea.transform);
-                        var pieceController = pieceInstance.GetComponent<PieceController>();
-                        pieceController.OriginPos = new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0) + pieceController.offset;
-                        pieceController.ChangeTeam(1);
-                        pieceController.initHealthUI();
-                        pieceController.Reset();
-                        LayerTool.ChangeLayer(pieceController.transform,3);
-                        PutPiece(Vector3Int.RoundToInt(new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0)), pieceController);
+                        var piece = cell.Split('|');
+                        var piecePrefab = DataManager.Instance.PiecePrefabs[int.Parse(piece[1])]
+                            .FirstOrDefault(e =>
+                                (e != null ? e.GetComponent<PieceController>().pieceName : null) == piece[0]);
+                        if (piecePrefab != null)
+                        {
+                            var pieceInstance = Instantiate(piecePrefab, PieceArea.transform);
+                            var pieceController = pieceInstance.GetComponent<PieceController>();
+                            pieceController.OriginPos = new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0) +
+                                                        pieceController.offset;
+                            pieceController.ChangeTeam(1);
+                            pieceController.initHealthUI();
+                            pieceController.Reset();
+                            LayerTool.ChangeLayer(pieceController.transform, 3);
+                            PutPiece(Vector3Int.RoundToInt(new Vector3(col + mapRect.xMin, row + mapRect.yMin, 0)),
+                                pieceController);
+                        }
                     }
                 }
             }
         }
+        else
+        {
+            Debug.LogError("地图长宽错误");
+        }
     }
 
-    public int GetPieceCount(int Team=0)
+    public int GetPieceCount(int Team = 0)
     {
         int cnt = 0;
-        if (_pieceLocates!=null)
-        foreach (var piece in _pieceLocates)
-        {
-            if (piece != null)
+        if (_pieceLocates != null)
+            foreach (var piece in _pieceLocates)
             {
-                cnt += piece.Team == Team ? 1 : 0;
+                if (piece != null)
+                {
+                    cnt += piece.Team == Team ? 1 : 0;
+                }
             }
-        }
         return cnt;
     }
 
@@ -131,9 +140,9 @@ public class MapEditor : MonoBehaviour
     /// <summary>
     /// Initialize Map
     /// </summary>
-    public void InitTileMap()
+    public void InitTileMap(bool force = false)
     {
-        if (!init)
+        if (!init || force)
         {
             _map = new bool[mapRect.width, mapRect.height];
             _pieceLocates = new PieceController[mapRect.width, mapRect.height];
@@ -148,6 +157,21 @@ public class MapEditor : MonoBehaviour
             }
             ReloadMap();
             init = true;
+        }
+    }
+
+    public void ClearPiece(int team = -1)
+    {
+        for (var row = 0; row < height; ++row)
+        {
+            for (var col = 0; col < width; ++col)
+            {
+                if (team == -1) _pieceLocates[col, row] = null;
+                else if (_pieceLocates[col, row] != null && _pieceLocates[col, row].Team == team)
+                {
+                    _pieceLocates[col, row] = null;
+                }
+            }
         }
     }
 
@@ -208,7 +232,7 @@ public class MapEditor : MonoBehaviour
     /// <param name="source">source cell</param>
     /// <param name="target">target cell</param>
     /// <returns></returns>
-    public List<Vector2Int> FindPathToTarget(Vector3Int source, Vector3Int target, float distance)
+    public List<Vector2Int> FindPathToTarget(Vector3Int source, Vector3Int target, PieceController piece)
     {
         var path = new List<Vector2Int>();
         var target2 = new Vector2Int(target.x, target.y);
@@ -226,7 +250,7 @@ public class MapEditor : MonoBehaviour
                 if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y] == null) && parent[nextInRect.x, nextInRect.y] == null)
                 {
                     parent[nextInRect.x, nextInRect.y] = front;
-                    if (Vector2.Distance(target2, next) < distance)
+                    if ((piece.IsRemoteAttack && Vector2.Distance(target2, next) < piece.AttackDistance + 6e-6) || (!piece.IsRemoteAttack && Mathf.Abs(target2.x - next.x) < piece.AttackDistance + 6e-6 && target2.y == next.y))
                     {
                         while (parent[nextInRect.x, nextInRect.y].HasValue)
                         {

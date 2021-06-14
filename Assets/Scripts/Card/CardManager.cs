@@ -11,6 +11,8 @@ public class CardManager : MonoBehaviour
 
     public int cost;
 
+    private bool _cardResetLock = false;
+
     private void Awake()
     {
         Cards = GetComponentsInChildren<CardBaseController>().ToList();
@@ -20,6 +22,8 @@ public class CardManager : MonoBehaviour
 
     public void ResetCard()
     {
+        if (_cardResetLock) return;
+        _cardResetLock = true;
         if (player.SpendMoney(cost))
         {
             foreach (var card in Cards)
@@ -72,6 +76,7 @@ public class CardManager : MonoBehaviour
                 UIEvent.cost = controller.cost;
             }
         }
+        _cardResetLock = false;
         yield break;
     }
 

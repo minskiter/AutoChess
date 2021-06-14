@@ -36,6 +36,8 @@ public class GameBoardManager : MonoBehaviour
 
     public DataManager dataManager = DataManager.Instance;
 
+    public GameMap currentMap;
+
     public void GameOver(int winner)
     {
         if (state == GameState.End)
@@ -66,11 +68,20 @@ public class GameBoardManager : MonoBehaviour
         }
     }
 
+
+    private bool _startBattleLock = false;
+
+    private void UnlockBattle()
+    {
+        _startBattleLock = false;
+    }
     /// <summary>
     /// start battle
     /// </summary>
     public void StartBattle()
     {
+        if (_startBattleLock) return;
+        _startBattleLock = true;
         switch (state)
         {
             case GameState.Battle:
@@ -91,6 +102,8 @@ public class GameBoardManager : MonoBehaviour
                     break;
                 }
         }
+
+        Invoke("UnlockBattle", 1f); // TODO: 暂时如此，虽然很粗糙
     }
 
     /// <summary>
@@ -125,9 +138,21 @@ public class GameBoardManager : MonoBehaviour
 
     public void LoadMap(GameMap map)
     {
+        currentMap = map;
+        this.map.InitTileMap(true);
         this.map.LoadMap(map);
         _piecesList = this.map.Pieces;
         SetDraggable(false, 1);
+    }
+
+    public void NextMap(GameMap map)
+    {
+        if (map != null)
+        {
+            currentMap = map;
+            this.map.LoadMap(map);
+            SetDraggable(false, 1);
+        }
     }
 
     void Start()
@@ -265,14 +290,15 @@ public class GameBoardManager : MonoBehaviour
                             // If need to  move piece
                             if (piece.state != PieceController.PieceState.Move)
                             {
-                                var dis = Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition);
-                                Debug.Log(dis);
-                                Debug.Log(piece.CurrentPosition);
-                                if (dis > piece.AttackDistance + 6e-6f) // float number equal 
+
+                                var dis = piece.IsRemoteAttack
+                                    ? Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition)
+                                    : Mathf.Abs(piece.Target.TargetPos.x - piece.CurrentPosition.x);
+                                if ((dis > piece.AttackDistance + 6e-6f && piece.IsRemoteAttack) || (!piece.IsRemoteAttack && (piece.Target.TargetPos.y != piece.CurrentPosition.y || dis > piece.AttackDistance + 6e-6f))) // float number equal 
                                 {
                                     // Whether the surrounding movable grid is shorter
                                     var targetPath = map.FindPathToTarget(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
-                                        Vector3Int.RoundToInt(piece.Target.TargetPos - piece.offset), piece.AttackDistance + 6e-6f);
+                                        Vector3Int.RoundToInt(piece.Target.TargetPos - piece.offset), piece);
                                     if (targetPath != null)
                                     {
                                         if (targetPath.Count > 0)
@@ -298,7 +324,7 @@ public class GameBoardManager : MonoBehaviour
                                         piece.Target = null;
                                     }
                                 }
-                                else if (Vector3.Distance(piece.Target.CurrentPosition, piece.CurrentPosition) < piece.AttackDistance + 6e-6)
+                                else
                                 {
                                     // Attack the piece
                                     if (piece.CanAttackDamage())

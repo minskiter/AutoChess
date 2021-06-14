@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,6 +66,16 @@ public class GameManager :MonoSingleton<GameManager>
         message.SetActive(true);
         messageText.GetComponent<Text>().text = "WIN";
         Invoke("HideMessageImage", 1f);
+        // NextMap
+        var map = DataManager.Instance.MapLists.FirstOrDefault(e =>
+            e.Name == (int.Parse(manager.map.name) + 1).ToString());
+        if (map == null)
+        {
+            Debug.LogWarning("最后一个关卡", gameObject);
+            SceneManager.Instance.BackMenu();
+            return;
+        }
+        manager.NextMap(map);
     }
 
     /// <summary>
