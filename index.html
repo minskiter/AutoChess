@@ -9,7 +9,7 @@
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1920 height=1080></canvas>
+      <canvas id="unity-canvas" width=1920 height=1080 style="width:98vw;height:auto;"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -52,19 +52,19 @@
       // the canvas DOM size and WebGL render target sizes yourself.
       // config.matchWebGLToCanvasSize = false;
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-        // Avoid draining fillrate performance on mobile devices,
-        // and default/override low DPI mode on mobile browsers.
-        config.devicePixelRatio = 1;
-        mobileWarning.style.display = "block";
-        setTimeout(() => {
-          mobileWarning.style.display = "none";
-        }, 5000);
-      } else {
-        canvas.style.width = "98vw";
-        canvas.style.height = "auto";
-      }
+    //   if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    //     container.className = "unity-mobile";
+    //     // Avoid draining fillrate performance on mobile devices,
+    //     // and default/override low DPI mode on mobile browsers.
+    //     config.devicePixelRatio = 1;
+    //     mobileWarning.style.display = "block";
+    //     setTimeout(() => {
+    //       mobileWarning.style.display = "none";
+    //     }, 5000);
+    //   } else {
+        // canvas.style.width = "98vw";
+        // canvas.style.height = "auto";
+    //   }
       loadingBar.style.display = "block";
 
       var script = document.createElement("script");
