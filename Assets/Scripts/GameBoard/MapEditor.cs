@@ -72,6 +72,11 @@ public class MapEditor : MonoBehaviour
 
     public void LoadMap(GameMap map)
     {
+        var maxPieceList = new List<int>
+        {
+            5, 6, 6, 7, 7
+        };
+        maxPieces = maxPieceList[int.Parse(map.Name) - 1];
         if (height == map.Height && width == map.Width)
         {
             InitTileMap();
@@ -169,6 +174,7 @@ public class MapEditor : MonoBehaviour
                 if (team == -1) _pieceLocates[col, row] = null;
                 else if (_pieceLocates[col, row] != null && _pieceLocates[col, row].Team == team)
                 {
+                    Destroy(_pieceLocates[col, row].gameObject);
                     _pieceLocates[col, row] = null;
                 }
             }

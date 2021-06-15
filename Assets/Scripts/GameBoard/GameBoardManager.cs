@@ -43,7 +43,6 @@ public class GameBoardManager : MonoBehaviour
         if (state == GameState.End)
         {
             state = GameState.Start;
-            SetDraggable(true, 0);
             if (winner == 0)
             {
                 WinHandler?.Invoke();
@@ -52,11 +51,11 @@ public class GameBoardManager : MonoBehaviour
             {
                 if (LossHandler != null)
                 {
-                    var healthDamage = GetAllTeamHealth(1);
-                    LossHandler(healthDamage);
+                    LossHandler(GetTeamAlive(1));
                 }
             }
-            currentPiece.Reset();
+            SetDraggable(true, 0);
+            currentPiece = _piecesList.GetEnumerator();
             // clear old piece
             map.ResetPieces();
             // reset new piece
@@ -151,6 +150,7 @@ public class GameBoardManager : MonoBehaviour
         {
             currentMap = map;
             this.map.LoadMap(map);
+            _piecesList = this.map.Pieces;
             SetDraggable(false, 1);
         }
     }
@@ -228,6 +228,16 @@ public class GameBoardManager : MonoBehaviour
     public int GetAllTeamHealth(int team)
     {
         return _piecesList.Where(piece => piece.Team == team).Sum(piece => piece.Health);
+    }
+
+    public int GetTeamAlive(int team)
+    {
+        return _piecesList.Where(piece => piece.Team == team && piece.Alive).Count();
+    }
+
+    public int GetTeam(int team)
+    {
+        return _piecesList.Where(piece => piece.Team == team).Count();
     }
 
 

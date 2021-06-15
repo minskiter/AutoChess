@@ -12,6 +12,7 @@ public class SceneManager : MonoSingleton<SceneManager>
 
     public void SwitchCheckpoint(string checkPointName)
     {
+        Debug.Log(checkPointName);
         if (checkPointName != null)
         {
             DataManager.Instance.CurrentMap = DataManager.Instance.MapLists.FirstOrDefault(e => e.Name == checkPointName);
