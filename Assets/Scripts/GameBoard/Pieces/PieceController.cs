@@ -82,6 +82,23 @@ public class PieceController: MonoBehaviour
 
     public int star = 1;
 
+    public bool Clickable
+    {
+        get
+        {
+            return draggable || Placeable;
+        }
+        set
+        {
+            if (value == false)
+            {
+                draggable = false;
+                Placeable = false;
+            }
+        }
+
+    }
+
 
     // attack interval 1s
     [SerializeField]
@@ -256,6 +273,7 @@ public class PieceController: MonoBehaviour
 
     void OnMouseDown()
     {
+        if (!Clickable) return;
         if (!_doubleclick)
         {
             _doubleclick = true;
@@ -263,7 +281,7 @@ public class PieceController: MonoBehaviour
         }
         else
         {
-            dialogController.Set($"{pieceName}({star})", maxHealth, attack, AttackDistance, moveSpeed, attackInterval, cost);
+            dialogController.Set($"{pieceName}", maxHealth, attack, AttackDistance, moveSpeed, attackInterval, cost,star);
             _doubleclick = false;
             CancelInvoke("CancelClick");
             if (!dialogController.gameObject.activeSelf)

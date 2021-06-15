@@ -8,6 +8,12 @@ public class DialogController : MonoBehaviour
     [SerializeField]
     private Text _name;
 
+    public List<GameObject> stars;
+
+    [SerializeField] private Vector3 ModelOffset = new Vector3(-3.3f, -0.8f, 0);
+
+    public GameObject model = null;
+
     public string Name
     {
         get
@@ -17,6 +23,29 @@ public class DialogController : MonoBehaviour
         set
         {
             _name.text = value;
+        }
+    }
+
+    public int Star
+    {
+        set
+        {
+            switch (value)
+            {
+                case 1:
+                    stars[0].SetActive(false);
+                    stars[1].SetActive(true);
+                    stars[2].SetActive(false);
+                    break;
+                case 2:
+                    stars[0].SetActive(true);
+                    stars[1].SetActive(true);
+                    stars[2].SetActive(false);
+                    break;
+                case 3:
+                    stars.ForEach(e => e.SetActive(true));
+                    break;
+            }
         }
     }
 
@@ -121,7 +150,7 @@ public class DialogController : MonoBehaviour
     /// <param name="attackInterval"></param>
     /// <param name="cost"></param>
     public void Set(string name, int health, int attack, float attackDistance, float moveSpeed, float attackInterval,
-        int cost)
+        int cost,int star)
     {
         Name = name;
         Health = health;
@@ -130,7 +159,33 @@ public class DialogController : MonoBehaviour
         MoveSpeed = moveSpeed;
         AttackInterval = attackInterval;
         Cost = cost;
+        Star = star;
+        var prefab = DataManager.Instance.PiecePrefabs[star]
+            .Find(e => e.GetComponent<PieceController>().pieceName == name);
+        Debug.Log(prefab);
+        if (model != null)
+        {
+            Destroy(model);
+        }
+        var instance = GameObject.Instantiate(prefab);
+        var controller = instance.GetComponent<PieceController>();
+        controller.OriginPos = ModelOffset;
+        controller.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+        controller.Clickable = false;
+        controller.Reset();
+        model = instance;
+        LayerTool.ChangeLayer(instance.transform, 5);
     }
+
+    /// <summary>
+    /// 销毁模型
+    /// </summary>
+    public void OnDisable()
+    {
+        if (model!=null)
+            Destroy(model);
+    }
+
 
     /// <summary>
     /// 关闭窗口

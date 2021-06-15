@@ -45,6 +45,7 @@ public class GameBoardManager : MonoBehaviour
             state = GameState.Start;
             if (winner == 0)
             {
+                map.ResetPieces();
                 WinHandler?.Invoke();
             }
             else
@@ -53,12 +54,10 @@ public class GameBoardManager : MonoBehaviour
                 {
                     LossHandler(GetTeamAlive(1));
                 }
+                map.ResetPieces();
             }
             SetDraggable(true, 0);
             currentPiece = _piecesList.GetEnumerator();
-            // clear old piece
-            map.ResetPieces();
-            // reset new piece
             foreach (var piece in _piecesList)
             {
                 piece.Reset();

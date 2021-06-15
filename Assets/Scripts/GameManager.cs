@@ -5,7 +5,7 @@ using Assets.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager :MonoSingleton<GameManager>
+public class GameManager : MonoBehaviour
 {
     // the _turn of game
     private int _turn = 1;
@@ -38,8 +38,10 @@ public class GameManager :MonoSingleton<GameManager>
     public CardManager cardManager;
 
     public Text StageTurnText;
-    public GameObject message;
-    public GameObject messageText;
+    public GameObject WinMessage;
+    public Text WinMessageText;
+    public GameObject LoseMessage;
+    public Text LoseMessageText;
 
     private enum GameState
     {
@@ -51,9 +53,8 @@ public class GameManager :MonoSingleton<GameManager>
 
     private GameState state;
 
-    override public void Awake()
+    public void Awake()
     {
-        base.Awake();
         manager.WinHandler = WinHanler;
         manager.LossHandler = LossHander;
     }
@@ -65,21 +66,32 @@ public class GameManager :MonoSingleton<GameManager>
     {
         state = GameState.Settlement;
         ++Turn;
-        message.SetActive(true);
-        messageText.GetComponent<Text>().text = "WIN";
-        Invoke("HideMessageImage", 1f);
+        WinMessage.SetActive(true);
+        
         int checkpoint = int.Parse(manager.currentMap.Name);
-        player.Gold += (10 + checkpoint * manager.GetTeam(1)) * 2;
+        var gold = (10 + checkpoint * manager.GetTeam(1)) * 2;
+        player.Gold += gold;
         // NextMap
         var map = DataManager.Instance.MapLists.FirstOrDefault(e =>
             e.Name == (int.Parse(manager.currentMap.Name) + 1).ToString());
         if (map == null)
         {
-            SceneManager.Instance.BackMenu();
+            WinMessageText.text = $"恭喜你通关!!";
+            Invoke("Back", 3f);
             return;
         }
+        else
+        {
+            WinMessageText.text = $"进入下一个关卡\n能量增加${gold}";
+        }
+        Invoke("HideMessageImage", 1.5f);
         manager.NextMap(map);
         cardManager.ResetCard();
+    }
+
+    public void Back()
+    {
+        SceneManager.Instance.BackMenu();
     }
 
     /// <summary>
@@ -89,12 +101,14 @@ public class GameManager :MonoSingleton<GameManager>
     {
         int checkpoint = int.Parse(manager.currentMap.Name);
         state = GameState.Settlement;
-        player.TakeDamage(checkpoint+damage*checkpoint*(1<<(_turn-1)));
-        player.Gold += 10 + (manager.GetTeam(1)-damage) * checkpoint; 
+        var total_damage = checkpoint + damage * checkpoint * (1 << Mathf.CeilToInt(Mathf.Max(_turn/3f - 1,1)));
+        player.TakeDamage(total_damage);
+        var gold = 10 + (manager.GetTeam(1) - damage) * checkpoint;
+        player.Gold += gold;
         ++Turn;
-        message.SetActive(true);
-        messageText.GetComponent<Text>().text = "LOSE";
-        Invoke("HideMessageImage", 1f);
+        LoseMessage.SetActive(true);
+        LoseMessageText.text = $"生命值减少{total_damage}\n能量增加{gold}";
+        Invoke("HideMessageImage", 1.5f);
         if (!player.Alive)
         {
             // end of game
@@ -109,7 +123,11 @@ public class GameManager :MonoSingleton<GameManager>
 
     public void HideMessageImage()
     {
-        if (message.gameObject!=null &&  message.gameObject.activeSelf) 
-            message.SetActive(false);
+        if (WinMessage.gameObject != null && WinMessage.gameObject.activeSelf)
+            WinMessage.SetActive(false);
+        if (LoseMessage.gameObject != null && LoseMessage.gameObject.activeSelf)
+        {
+            LoseMessage.SetActive(false);
+        }
     }
 }
