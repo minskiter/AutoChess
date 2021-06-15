@@ -35,6 +35,8 @@ public class GameManager :MonoSingleton<GameManager>
     // the player 
     public PlayerController player;
 
+    public CardManager cardManager;
+
     public Text StageTurnText;
     public GameObject message;
     public GameObject messageText;
@@ -66,16 +68,18 @@ public class GameManager :MonoSingleton<GameManager>
         message.SetActive(true);
         messageText.GetComponent<Text>().text = "WIN";
         Invoke("HideMessageImage", 1f);
+        int checkpoint = int.Parse(manager.currentMap.Name);
+        player.Gold += (10 + checkpoint * manager.GetTeam(1)) * 2;
         // NextMap
         var map = DataManager.Instance.MapLists.FirstOrDefault(e =>
-            e.Name == (int.Parse(manager.map.name) + 1).ToString());
+            e.Name == (int.Parse(manager.currentMap.Name) + 1).ToString());
         if (map == null)
         {
-            Debug.LogWarning("最后一个关卡", gameObject);
             SceneManager.Instance.BackMenu();
             return;
         }
         manager.NextMap(map);
+        cardManager.ResetCard();
     }
 
     /// <summary>
@@ -83,11 +87,11 @@ public class GameManager :MonoSingleton<GameManager>
     /// </summary>
     public void LossHander(int damage)
     {
+        int checkpoint = int.Parse(manager.currentMap.Name);
         state = GameState.Settlement;
-        player.TakeDamage(Mathf.RoundToInt(damage / 10f * _turn));
-        player.Gold += Mathf.FloorToInt(Mathf.Min(damage / 2, 10));
+        player.TakeDamage(checkpoint+damage*checkpoint*(1<<(_turn-1)));
+        player.Gold += 10 + (manager.GetTeam(1)-damage) * checkpoint; 
         ++Turn;
-
         message.SetActive(true);
         messageText.GetComponent<Text>().text = "LOSE";
         Invoke("HideMessageImage", 1f);
@@ -95,6 +99,7 @@ public class GameManager :MonoSingleton<GameManager>
         {
             // end of game
         }
+        cardManager.ResetCard();
     }
 
     public void Reset()
@@ -104,6 +109,7 @@ public class GameManager :MonoSingleton<GameManager>
 
     public void HideMessageImage()
     {
-        message.SetActive(false);
+        if (message.gameObject!=null &&  message.gameObject.activeSelf) 
+            message.SetActive(false);
     }
 }

@@ -19,7 +19,7 @@ public class TrashController : MonoBehaviour
                 {
                     manager._piecesList.Remove(controller);
                     manager.map.PutPiece(Vector3Int.RoundToInt(controller.OriginPos - controller.offset), null);
-                    player.Gold += controller.cost / 2;
+                    player.Gold += Mathf.CeilToInt(controller.cost * 0.8f); // 费用公式 ceil(cost*0.8)
                     Destroy(controller.gameObject);
                 }
             }

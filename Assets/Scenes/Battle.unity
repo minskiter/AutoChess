@@ -743,7 +743,7 @@ MonoBehaviour:
   maxHealth: 100
   HealthUI: {fileID: 960789981}
   MoneyUI: {fileID: 805552977}
-  initGold: 100
+  initGold: 50
   team: 0
 --- !u!4 &225496090
 Transform:
@@ -3123,6 +3123,7 @@ MonoBehaviour:
   stage: 0
   manager: {fileID: 95563933}
   player: {fileID: 225496089}
+  cardManager: {fileID: 2117915057}
   StageTurnText: {fileID: 448599022}
   message: {fileID: 538289592}
   messageText: {fileID: 789421179}
