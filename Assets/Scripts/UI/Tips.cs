@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Tips : MonoBehaviour {
 
     void Start () {
-
         gameObject.SetActive(false);
     }
 }
