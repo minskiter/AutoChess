@@ -222,7 +222,7 @@ public class PieceController: MonoBehaviour
             Destroy(healthUI);
         }
 
-        var prefab = Resources.Load<GameObject>(Team == 0 ? "Prefab/Health/RedHealth" : "Prefab/Health/BlueHealth");
+        var prefab = Resources.Load<GameObject>(Team == 1 ? "Prefab/Health/RedHealth" : "Prefab/Health/BlueHealth");
         healthUI = Instantiate<GameObject>(prefab, healthSystem.transform);
         healthUI.GetComponent<HealthController>().Init(this);
     }
@@ -474,6 +474,7 @@ public class PieceController: MonoBehaviour
         // fixed origin position
         transform.position = originPos; // origin cell position and offset
         targetPos = originPos;
+        lastMove = originPos;
         // reset animation
         // AnimatorController.Rebind();
         // AnimatorController.Update(0f);
@@ -486,12 +487,14 @@ public class PieceController: MonoBehaviour
         Destroy(healthUI);
     }
 
+    public Vector3 lastMove;
 
     public bool Move(Vector3 target)
     {
         if (state == PieceState.Idle)
         {
             targetPos = target;
+            lastMove = TargetPos;
             // AnimatorController.SetBool("PieceRun",true);
             AnimatorController.ChangeAnimation(PlayerAnimations.Run.ToString());
             state = PieceState.Move;

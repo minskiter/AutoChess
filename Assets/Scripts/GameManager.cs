@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
         int checkpoint = int.Parse(manager.currentMap.Name);
         var gold = (10 + checkpoint * manager.GetTeam(1)) * 2;
         player.Gold += gold;
+        PlayerPrefs.SetString($"{manager.currentMap.Name}Checkpoint", "true");
         // NextMap
         var map = DataManager.Instance.MapLists.FirstOrDefault(e =>
             e.Name == (int.Parse(manager.currentMap.Name) + 1).ToString());

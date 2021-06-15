@@ -155,7 +155,7 @@ public class MapEditor : MonoBehaviour
             foreach (var pos in mapRect.allPositionsWithin)
             {
                 _map[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
-                if (pos.x - mapRect.xMin <= mapRect.width / 2)
+                if (pos.x - mapRect.xMin < mapRect.width / 2)
                 {
                     _canPlacePiece[pos.x - mapRect.xMin, pos.y - mapRect.yMin] = true;
                 }
@@ -230,6 +230,64 @@ public class MapEditor : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void FindEnemy(PieceController piece)
+    {
+        Vector3Int source3 = Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset);
+        Vector2Int source2 = new Vector2Int(source3.x, source3.y);
+        var visited = new HashSet<int>
+        {
+            (source2.x<<10)+source2.y
+        };
+        var queue = new Queue<Vector2Int>();
+        queue.Enqueue(source2);
+        while (queue.Count > 0)
+        {
+            var front = queue.Dequeue();
+            float minimum = float.MaxValue;
+            // 暴力查看周围是否有满足攻击的对象
+            foreach (var enemy in Pieces)
+            {
+                if (enemy.Team != piece.Team && enemy.Alive)
+                {
+                    // 判断是否在攻击范围
+                    Vector3Int enemyPosition = Vector3Int.RoundToInt(enemy.TargetPos - enemy.offset);
+                    Vector2Int enemyPosition2 = new Vector2Int(enemyPosition.x, enemyPosition.y);
+                    if (piece.IsRemoteAttack)
+                    {
+                        var dist = Vector2Int.Distance(enemyPosition2, front);
+                        if (dist < piece.AttackDistance + 6e-6 && dist < minimum)
+                        {
+                            minimum = dist;
+                            piece.Target = enemy;
+                        }
+                    }
+                    else if (enemyPosition2.y == front.y)
+                    {
+                        var dist = Mathf.Abs(enemyPosition2.x - front.x);
+                        if (dist < piece.AttackDistance + 6e-6 && dist < minimum)
+                        {
+                            minimum = dist;
+                            piece.Target = enemy;
+                        }
+                    }
+                }
+            }
+            if (piece.Target != null)
+                return;
+            foreach (var direction in _forwards2)
+            {
+                var next = front + direction;
+                var nextInRect = next - mapRect.min;
+                var key = (next.x << 10) + next.y;
+                if (mapRect.Contains(next) && _map[nextInRect.x, nextInRect.y] && (_pieceLocates[nextInRect.x, nextInRect.y] == null) && !visited.Contains(key))
+                {
+                    visited.Add(key);
+                    queue.Enqueue(next);
+                }
+            }
+        }
     }
 
     /// <summary>

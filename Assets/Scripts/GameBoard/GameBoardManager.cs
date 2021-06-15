@@ -46,6 +46,11 @@ public class GameBoardManager : MonoBehaviour
             if (winner == 0)
             {
                 map.ResetPieces();
+                foreach (var piece in _piecesList)
+                {
+                    piece.Reset();
+                    map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), piece);
+                }
                 WinHandler?.Invoke();
             }
             else
@@ -101,7 +106,7 @@ public class GameBoardManager : MonoBehaviour
                 }
         }
 
-        Invoke("UnlockBattle", 1f); // TODO: ‘› ±»Á¥À£¨À‰»ª∫‹¥÷≤⁄
+        Invoke("UnlockBattle", 1f); // TODO: ÔøΩÔøΩ ±ÔøΩÔøΩÀ£ÔøΩÔøΩÔøΩ»ªÔøΩ‹¥÷≤ÔøΩ
     }
 
     /// <summary>
@@ -229,14 +234,14 @@ public class GameBoardManager : MonoBehaviour
         return _piecesList.Where(piece => piece.Team == team).Sum(piece => piece.Health);
     }
 
-    public int GetTeamAlive(int team)
+    public int GetTeamAlive(int team = -1)
     {
-        return _piecesList.Where(piece => piece.Team == team && piece.Alive).Count();
+        return team == -1 ? _piecesList.Count(p => p.Alive) : _piecesList.Count(piece => piece.Team == team && piece.Alive);
     }
 
     public int GetTeam(int team)
     {
-        return _piecesList.Where(piece => piece.Team == team).Count();
+        return _piecesList.Count(piece => piece.Team == team);
     }
 
 
@@ -268,6 +273,12 @@ public class GameBoardManager : MonoBehaviour
         {
             if (state == GameState.Battle)
             {
+                if (GetTeamAlive() == 0)
+                {
+                    yield return new WaitForSeconds(5f);
+                    state = GameState.End;
+                    GameOver(0);
+                }
                 // If end of piece then  reset piece to start
                 if (!currentPiece.MoveNext())
                 {
@@ -285,46 +296,61 @@ public class GameBoardManager : MonoBehaviour
                         }
                         if (piece.Target == null)
                         {
-                            FindEnemy(piece);
+                            //FindEnemy(piece);
+                            map.FindEnemy(piece);
                         }
-                        if (piece.Target == null)
+                        if (GetTeamAlive(piece.Team ^ 1) == 0)
                         {
                             yield return new WaitForSeconds(5f);
                             // update winner
                             state = GameState.End;
                             GameOver(piece.Team);
                         }
-                        else
+                        else if (piece.Target != null)
                         {
                             // If need to  move piece
-                            if (piece.state != PieceController.PieceState.Move)
+                            if (piece.state == PieceController.PieceState.Idle && piece.Alive)
                             {
-
                                 var dis = piece.IsRemoteAttack
-                                    ? Vector3.Distance(piece.Target.TargetPos, piece.CurrentPosition)
+                                    ? Vector2.Distance(piece.Target.TargetPos, piece.CurrentPosition)
                                     : Mathf.Abs(piece.Target.TargetPos.x - piece.CurrentPosition.x);
-                                if ((dis > piece.AttackDistance + 6e-6f && piece.IsRemoteAttack) || (!piece.IsRemoteAttack && (piece.Target.TargetPos.y != piece.CurrentPosition.y || dis > piece.AttackDistance + 6e-6f))) // float number equal 
+                                if ((dis > piece.AttackDistance + 6e-6f && piece.IsRemoteAttack) ||
+                                    (!piece.IsRemoteAttack &&
+                                     (piece.Target.TargetPos.y != piece.CurrentPosition.y ||
+                                      dis > piece.AttackDistance +
+                                      6e-6f))) // float number equal 
                                 {
                                     // Whether the surrounding movable grid is shorter
-                                    var targetPath = map.FindPathToTarget(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
+                                    var targetPath = map.FindPathToTarget(
+                                        Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
                                         Vector3Int.RoundToInt(piece.Target.TargetPos - piece.offset), piece);
                                     if (targetPath != null)
                                     {
                                         if (targetPath.Count > 0)
                                         {
                                             var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
-                                            if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
+                                            if (target == piece.lastMove)
                                             {
-                                                map.PutPiece(Vector3Int.RoundToInt(target), piece); // place the piece to target first 
-                                                if (piece.Move(target + piece.offset))
+                                                piece.Target = null; // Èò≤Ê≠¢ÈáçÂ§çÂõûË∑≥
+                                            }
+                                            else
+                                            {
+                                                if (map.CheckMoveable(Vector3Int.RoundToInt(target)))
                                                 {
-                                                    map.PutPiece(Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset), null);
-                                                }
-                                                else
-                                                {
-                                                    map.PutPiece(Vector3Int.RoundToInt(target), null);
-                                                }
+                                                    map.PutPiece(Vector3Int.RoundToInt(target),
+                                                        piece); // place the piece to target first 
+                                                    if (piece.Move(target + piece.offset))
+                                                    {
+                                                        map.PutPiece(
+                                                            Vector3Int.RoundToInt(piece.CurrentPosition - piece.offset),
+                                                            null);
+                                                    }
+                                                    else
+                                                    {
+                                                        map.PutPiece(Vector3Int.RoundToInt(target), null);
+                                                    }
 
+                                                }
                                             }
                                         }
                                     }
@@ -344,11 +370,11 @@ public class GameBoardManager : MonoBehaviour
                             }
                         }
                     }
-
                 }
             }
             yield return null;
         }
-    }
 
+    }
 }
+
