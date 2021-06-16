@@ -26,30 +26,45 @@ public class CardManager : MonoBehaviour
         _cardResetLock = true;
         if (player.SpendMoney(cost))
         {
-            foreach (var card in Cards)
+            DrawCard();
+        }
+        else
+        {
+            _cardResetLock = false;
+        }
+    }
+
+    public void FreeDraw()
+    {
+        if (_cardResetLock) return;
+        _cardResetLock = true;
+        DrawCard();
+    }
+
+    public void DrawCard()
+    {
+        foreach (var card in Cards)
+        {
+            if (card.cardItem && card.cardItem.transform.parent == card.transform)
             {
-                if (card.cardItem && card.cardItem.transform.parent == card.transform)
+                Destroy(card.cardItem);
+            }
+            var ui = card.GetComponent<CardBaseController>().ui;
+            if (ui != null)
+            {
+                Animator ui_Animator = ui.GetComponent<Animator>();
+                if (ui_Animator.GetCurrentAnimatorStateInfo(0).IsName("FrontToBack"))
                 {
-                    Destroy(card.cardItem);
+                    ui_Animator.SetTrigger("BackToFront");
                 }
-                var ui = card.GetComponent<CardBaseController>().ui;
-                if (ui != null)
+                else
                 {
-                    Animator ui_Animator = ui.GetComponent<Animator>();
-                    if (ui_Animator.GetCurrentAnimatorStateInfo(0).IsName("FrontToBack"))
-                    {
-                        ui_Animator.SetTrigger("BackToFront");
-                    }
-                    else
-                    {
-                        ui_Animator.SetTrigger("FrontToBack");
-                        ui_Animator.SetTrigger("BackToFront");
-                    }
+                    ui_Animator.SetTrigger("FrontToBack");
+                    ui_Animator.SetTrigger("BackToFront");
                 }
             }
-
-            StartCoroutine(GetCards(new WaitForSeconds(1)));
         }
+        StartCoroutine(GetCards(new WaitForSeconds(1)));
     }
 
     IEnumerator GetCards(WaitForSeconds seconds)
