@@ -50,7 +50,6 @@ public class CharacterAnimator : MonoBehaviour
         if (e.Data.Name == "OnArrowLeftBow")
         {
             //Shoots a real arrow when the arrow in the animation leaves the bow
-
             Vector3 ArrowStartingPosition = Vector3.zero;
             float Angle = 0;
             if (trackEntry.Animation.ToString() == "Shoot1")

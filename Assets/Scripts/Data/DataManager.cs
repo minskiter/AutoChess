@@ -6,13 +6,15 @@ using Assets.Scripts.Data;
 using Assets.Scripts.Utils;
 using UnityEngine;
 
-public class DataManager:GlobalSingleton<DataManager>
+public class DataManager : GlobalSingleton<DataManager>
 {
     public Dictionary<int, List<GameObject>> PiecePrefabs;
 
     public List<GameMap> MapLists;
 
     public GameMap CurrentMap;
+
+    public Dictionary<string, AudioClip> AttackSource = new Dictionary<string, AudioClip>();
 
     public void Init()
     {
@@ -39,5 +41,12 @@ public class DataManager:GlobalSingleton<DataManager>
         {
             MapLists.Add(MapLoader.LoadMap(mapPath));
         }
+        // 暴力加载资源
+        AttackSource.Add("warrior", Resources.Load<AudioClip>("Audio/Warrior"));
+        AttackSource.Add("Arrow-damage", Resources.Load<AudioClip>("Audio/Arrow-damage"));
+        AttackSource.Add("Arrow-start", Resources.Load<AudioClip>("Audio/Arrow-start"));
+        AttackSource.Add("duelist", Resources.Load<AudioClip>("Audio/duelist"));
+        AttackSource.Add("duelistL", Resources.Load<AudioClip>("Audio/duelistL"));
+        AttackSource.Add("boom", Resources.Load<AudioClip>("Audio/boom"));
     }
 }
