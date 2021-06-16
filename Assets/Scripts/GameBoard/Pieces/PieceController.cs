@@ -182,10 +182,14 @@ public class PieceController: MonoBehaviour
 
     private DialogController dialogController;
 
+    public AudioSource audio;
+
     void Awake()
     {
         AnimatorController = GetComponent<CharacterAnimator>();
-        dialogController = GameObject.FindObjectOfType<DialogController>(true);
+        dialogController = FindObjectOfType<DialogController>(true);
+        audio = gameObject.AddComponent<AudioSource>();
+        audio.playOnAwake = false;
         SetOriginPosition();
         initHealthUI();
     }
@@ -408,7 +412,12 @@ public class PieceController: MonoBehaviour
             if (controller.Team != Team)
             {
                 if (controller.Attack.HasValue)
+                {
+                    audio.clip = DataManager.Instance.AttackSource["Arrow-damage"];
+                    audio.Play();
                     ApplyAttacked(controller.Attack.Value);
+                }
+
                 controller.MaxAttackEnemy--;
                 if (controller.MaxAttackEnemy <= 0)
                 {
@@ -423,6 +432,20 @@ public class PieceController: MonoBehaviour
     {
         AnimatorController.ChangeAnimation(PlayerAnimations.Attack2.ToString());
         AnimatorController.SetFlipX(Target.transform.position.x < transform.position.x);
+        if (AnimatorController.MyJob == Jobs.Warrior)
+        {
+            audio.clip = DataManager.Instance.AttackSource["warrior"];
+            audio.Play();
+        }
+        else if (AnimatorController.MyJob == Jobs.Duelist)
+        {
+            audio.clip = DataManager.Instance.AttackSource["duelist"];
+            audio.Play();
+        }else if (AnimatorController.MyJob == Jobs.Archer)
+        {
+            audio.clip = DataManager.Instance.AttackSource["Arrow-start"];
+            audio.Play();
+        }
         yield return new WaitForSeconds(attackInterval);
         if (!IsRemoteAttack)
         {

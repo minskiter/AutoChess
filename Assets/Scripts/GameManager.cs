@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
         }
         Invoke("HideMessageImage", 1.5f);
         manager.NextMap(map);
-        cardManager.ResetCard();
+        cardManager.FreeDraw();
     }
 
     public void Back()

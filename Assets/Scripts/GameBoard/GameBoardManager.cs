@@ -329,8 +329,9 @@ public class GameBoardManager : MonoBehaviour
                                         if (targetPath.Count > 0)
                                         {
                                             var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
-                                            if (target == piece.lastMove)
+                                            if (Vector3Int.RoundToInt(target)  == Vector3Int.RoundToInt(piece.lastMove-piece.offset)) // 防止小数点造成的错误，同时舍弃z轴
                                             {
+                                                Debug.Log(piece,piece.gameObject);
                                                 piece.Target = null; // 防止重复回跳
                                             }
                                             else
