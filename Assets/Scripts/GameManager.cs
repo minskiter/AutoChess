@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         state = GameState.Settlement;
         ++Turn;
         WinMessage.SetActive(true);
-        
+
         int checkpoint = int.Parse(manager.currentMap.Name);
         var gold = (10 + checkpoint * manager.GetTeam(1)) * 2;
         player.Gold += gold;
@@ -102,17 +102,23 @@ public class GameManager : MonoBehaviour
     {
         int checkpoint = int.Parse(manager.currentMap.Name);
         state = GameState.Settlement;
-        var total_damage = checkpoint + damage * checkpoint * (1 << Mathf.CeilToInt(Mathf.Max(_turn/3f - 1,1)));
+        var total_damage = checkpoint + damage * checkpoint * (1 << Mathf.CeilToInt(Mathf.Max(_turn / 3f - 1, 1)));
         player.TakeDamage(total_damage);
         var gold = 10 + (manager.GetTeam(1) - damage) * checkpoint;
         player.Gold += gold;
         ++Turn;
+
         LoseMessage.SetActive(true);
-        LoseMessageText.text = $"生命值减少{total_damage}\n能量增加{gold}";
-        Invoke("HideMessageImage", 1.5f);
         if (!player.Alive)
         {
-            // end of game
+            LoseMessageText.text = $"闯关失败";
+            Invoke("Back", 3f);
+            return;
+        }
+        else
+        {
+            LoseMessageText.text = $"生命值减少{total_damage}\n能量增加{gold}";
+            Invoke("HideMessageImage", 1.5f);
         }
         cardManager.ResetCard();
     }
