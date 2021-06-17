@@ -47,6 +47,7 @@ public class CharacterAnimator : MonoBehaviour
     void OnEventAnimation(TrackEntry trackEntry, Spine.Event e)
     {
         //This function only contains one event ("OnArrowLeftBow"). You can add whatever event you want the is available in the asset. Read the documentation provided to know the available events
+        var piece = gameObject.GetComponent<PieceController>();
         if (e.Data.Name == "OnArrowLeftBow")
         {
             //Shoots a real arrow when the arrow in the animation leaves the bow
@@ -67,24 +68,39 @@ public class CharacterAnimator : MonoBehaviour
             }
             GameObject newArrow = Instantiate(ArrowPrefab, ArrowStartingPosition, Quaternion.Euler(0, 0, 90 + Angle));
             var controller = newArrow.GetComponent<BallController>();
-            var piece = gameObject.GetComponent<PieceController>();
             controller.Attack = piece.attack;
             controller.Team = piece.Team;
             var from = new Vector2(piece.transform.position.x, piece.transform.position.y);
             if (piece.Target != null)
             {
+                piece.audio.clip = DataManager.Instance.AttackSource["Arrow-start"];
+                piece.audio.Play();
                 var to = new Vector2(piece.Target.transform.position.x, piece.Target.transform.position.y);
                 Angle = Vector2.Angle(to - from, Vector2.right) *
                         (piece.transform.position.y > piece.Target.transform.position.y ? -1f : 1f);
             }
             else
             {
-                Angle = 0;
+                Destroy(newArrow);
+                return;
             }
             //newArrow.transform.parent = gameObject.transform;
             newArrow.transform.Rotate(0f, 0f, Angle);
             newArrow.GetComponent<Rigidbody2D>().velocity =
                 new Vector2(Mathf.Cos(Angle * Mathf.PI / 180), Mathf.Sin(Angle * Mathf.PI / 180)) * 5f;
+        }else if (e.Data.Name == "OnDamaging")
+        {
+            if (MyJob == Jobs.Warrior)
+            {
+                piece.audio.clip = DataManager.Instance.AttackSource["warrior"];
+                piece.audio.Play();
+            }
+            else if (MyJob == Jobs.Duelist)
+            {
+                piece.audio.clip = DataManager.Instance.AttackSource["duelist"];
+                piece.audio.Play();
+            }
+            Debug.Log(MyJob.ToString());
         }
     }
 

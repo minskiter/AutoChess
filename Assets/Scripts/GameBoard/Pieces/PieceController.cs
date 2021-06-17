@@ -313,6 +313,10 @@ public class PieceController: MonoBehaviour
         }
         if (Placeable)
         {
+            if (!gameBoardManager.mask.activeSelf)
+            {
+                gameBoardManager.mask.SetActive(true);
+            }
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint);
             curPosition.z = 3f;
@@ -335,6 +339,7 @@ public class PieceController: MonoBehaviour
                 transform.position = currentCellPosition + offset;
                 originPos = transform.position;
                 targetPos = transform.position;
+                lastMove = TargetPos;
             }
             else
             {
@@ -344,6 +349,7 @@ public class PieceController: MonoBehaviour
         if (Placeable)
         {
             var currentCellPosition = Vector3Int.RoundToInt(CurrentPosition - offset);
+            gameBoardManager.mask.SetActive(false);
             if (gameBoardManager.map.canPlace(currentCellPosition, true))
             {
                 var add = gameBoardManager.AddPiece(this);
@@ -364,6 +370,7 @@ public class PieceController: MonoBehaviour
                     add.transform.localScale = new Vector3(.3f, .3f, .3f);
                     add.originPos = add.transform.position;
                     add.targetPos = add.transform.position;
+                    add.lastMove = TargetPos;
                     add.Placeable = false;
                     add.draggable = true;
                     gameBoardManager.map.PutPiece(currentCellPosition, add);
@@ -432,20 +439,7 @@ public class PieceController: MonoBehaviour
     {
         AnimatorController.ChangeAnimation(PlayerAnimations.Attack2.ToString());
         AnimatorController.SetFlipX(Target.transform.position.x < transform.position.x);
-        if (AnimatorController.MyJob == Jobs.Warrior)
-        {
-            audio.clip = DataManager.Instance.AttackSource["warrior"];
-            audio.Play();
-        }
-        else if (AnimatorController.MyJob == Jobs.Duelist)
-        {
-            audio.clip = DataManager.Instance.AttackSource["duelist"];
-            audio.Play();
-        }else if (AnimatorController.MyJob == Jobs.Archer)
-        {
-            audio.clip = DataManager.Instance.AttackSource["Arrow-start"];
-            audio.Play();
-        }
+        
         yield return new WaitForSeconds(attackInterval);
         if (!IsRemoteAttack)
         {

@@ -16,8 +16,12 @@ public class DataManager : GlobalSingleton<DataManager>
 
     public Dictionary<string, AudioClip> AttackSource = new Dictionary<string, AudioClip>();
 
+    private static bool _init;
+
     public void Init()
     {
+        if (_init) return;
+        _init = true;
         PiecePrefabs = new Dictionary<int, List<GameObject>>();
         MapLists = new List<GameMap>();
         var data = CsvLoader.LoadCsv("Data/pieces");

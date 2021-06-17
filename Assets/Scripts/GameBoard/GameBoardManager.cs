@@ -38,6 +38,8 @@ public class GameBoardManager : MonoBehaviour
 
     public GameMap currentMap;
 
+    public GameObject mask;
+
     public void GameOver(int winner)
     {
         if (state == GameState.End)
@@ -329,7 +331,7 @@ public class GameBoardManager : MonoBehaviour
                                         if (targetPath.Count > 0)
                                         {
                                             var target = new Vector3(targetPath[0].x, targetPath[0].y, 0);
-                                            if (Vector3Int.RoundToInt(target)  == Vector3Int.RoundToInt(piece.lastMove-piece.offset)) // 防止小数点造成的错误，同时舍弃z轴
+                                            if (Vector2Int.RoundToInt(target)  == Vector2Int.RoundToInt(piece.lastMove-piece.offset)) // 防止小数点造成的错误
                                             {
                                                 Debug.Log(piece,piece.gameObject);
                                                 piece.Target = null; // 防止重复回跳

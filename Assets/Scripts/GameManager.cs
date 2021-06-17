@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviour
         if (map == null)
         {
             WinMessageText.text = $"¹§Ï²ÄãÍ¨¹Ø!!";
+            Turn = 1;
             Invoke("Back", 3f);
             return;
         }
