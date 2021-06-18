@@ -296,11 +296,11 @@ public class GameBoardManager : MonoBehaviour
                         {
                             piece.Target = null;
                         }
-                        if (piece.Target == null)
-                        {
+                        //if (piece.Target == null)
+                        //{
                             //FindEnemy(piece);
                             map.FindEnemy(piece);
-                        }
+                        //}
                         if (GetTeamAlive(piece.Team ^ 1) == 0)
                         {
                             yield return new WaitForSeconds(5f);
