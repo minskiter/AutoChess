@@ -78,12 +78,13 @@ public class GameManager : MonoBehaviour
         if (map == null)
         {
             WinMessageText.text = $"恭喜你通关!!";
-            Turn = 1;
+            
             Invoke("Back", 3f);
             return;
         }
         else
         {
+            Turn = 1;
             WinMessageText.text = $"进入下一个关卡\n能量增加${gold}";
         }
         Invoke("HideMessageImage", 1.5f);

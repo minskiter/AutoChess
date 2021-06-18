@@ -57,12 +57,12 @@ public class MapEditor : MonoBehaviour
 
     private readonly List<Vector3Int> _forwards3 = new List<Vector3Int>
     {
-        Vector3Int.up, Vector3Int.down, Vector3Int.left, Vector3Int.right
+        Vector3Int.right, Vector3Int.down, Vector3Int.left,Vector3Int.up
     };
 
     private readonly List<Vector2Int> _forwards2 = new List<Vector2Int>
     {
-        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+        Vector2Int.right, Vector2Int.down,Vector2Int.left,Vector2Int.up
     };
 
     void OnEnable()
